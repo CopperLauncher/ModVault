@@ -37,6 +37,8 @@ jobs:
             ${{ runner.os }}-gradle-
 
       - name: Build Debug APK
+        env:
+          CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.cuinstaller.app.api.ModrinthApi;
+import com.cuinstaller.app.api.CurseForgeApi;
 import com.cuinstaller.app.model.ModResult;
 import com.cuinstaller.app.model.ModVersion;
 import com.cuinstaller.app.model.SearchResponse;
@@ -49,6 +50,9 @@ public class MainActivity extends AppCompatActivity {
     private InstalledModsAdapter installedAdapter;
 
     private final ModrinthApi api = new ModrinthApi();
+    private final CurseForgeApi curseForgeApi = new CurseForgeApi();
+    private boolean useCurseForge = false;
+    private Button btnModrinth, btnCurseForge;
     private final ModDownloader downloader = new ModDownloader();
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -74,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         setupFilters();
         setupSearch();
         setupBrowseRecycler();
+        setupSourceToggle();
         setupInstalledRecycler();
         setupSettings();
 
@@ -101,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
         emptyInstalled  = findViewById(R.id.empty_installed);
         tvFolderPath    = findViewById(R.id.tv_folder_path);
         browseProgress  = findViewById(R.id.browse_progress);
+        btnModrinth = findViewById(R.id.btn_modrinth);
+        btnCurseForge = findViewById(R.id.btn_curseforge);
         btnLoadMore     = findViewById(R.id.btn_load_more);
         btnChooseFolder = findViewById(R.id.btn_choose_folder);
     }
@@ -176,6 +183,25 @@ public class MainActivity extends AppCompatActivity {
         btnLoadMore.setOnClickListener(v -> searchMods(false));
     }
 
+    private void setupSourceToggle() {
+        btnModrinth.setOnClickListener(v -> {
+            useCurseForge = false;
+            btnModrinth.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFB87333));
+            btnModrinth.setTextColor(0xFFFFFFFF);
+            btnCurseForge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF241810));
+            btnCurseForge.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
+        btnCurseForge.setOnClickListener(v -> {
+            useCurseForge = true;
+            btnCurseForge.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFFB87333));
+            btnCurseForge.setTextColor(0xFFFFFFFF);
+            btnModrinth.setBackgroundTintList(android.content.res.ColorStateList.valueOf(0xFF241810));
+            btnModrinth.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
+    }
+
     private void setupSearch() {
         searchInput.addTextChangedListener(new TextWatcher() {
             private final Handler h = new Handler(Looper.getMainLooper());
@@ -242,6 +268,29 @@ public class MainActivity extends AppCompatActivity {
         String version = getSelectedVersion();
         String loader  = getSelectedLoader();
 
+        if (useCurseForge) {
+            curseForgeApi.searchMods(currentQuery, version, loader, currentOffset, results -> {
+                runOnUiThread(() -> {
+                    browseProgress.setVisibility(android.view.View.GONE);
+                    isLoading = false;
+                    if (reset) { modAdapter.getMods().clear(); modAdapter.notifyDataSetChanged(); }
+                    if (results.isEmpty()) {
+                        if (modAdapter.getItemCount() == 0) emptyBrowse.setVisibility(android.view.View.VISIBLE);
+                        btnLoadMore.setVisibility(android.view.View.GONE);
+                    } else {
+                        emptyBrowse.setVisibility(android.view.View.GONE);
+                        modAdapter.getMods().addAll(results); modAdapter.notifyDataSetChanged();
+                        currentOffset += results.size();
+                        btnLoadMore.setVisibility(android.view.View.VISIBLE);
+                    }
+                });
+            }, error -> runOnUiThread(() -> {
+                browseProgress.setVisibility(android.view.View.GONE);
+                isLoading = false;
+                Toast.makeText(this, "CurseForge error: " + error, Toast.LENGTH_SHORT).show();
+            }));
+            return;
+        }
         api.searchMods(currentQuery, version, loader, currentOffset, new ModrinthApi.Callback<SearchResponse>() {
             public void onSuccess(SearchResponse result) {
                 handler.post(() -> {
