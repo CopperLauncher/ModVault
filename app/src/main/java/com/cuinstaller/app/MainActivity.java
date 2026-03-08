@@ -364,6 +364,39 @@ public class MainActivity extends AppCompatActivity {
         loading.setMessage("Fetching versions…");
         loading.show();
 
+        if ("curseforge".equals(mod.source)) {
+            curseForgeApi.getLatestFile(mod.projectId, version, loader, fileObj -> {
+                handler.post(() -> {
+                    loading.dismiss();
+                    String fileId = fileObj.get("id").getAsString();
+                    String fileName = fileObj.get("fileName").getAsString();
+                    curseForgeApi.getDownloadUrl(mod.projectId, fileId, url -> {
+                        handler.post(() -> {
+                            new AlertDialog.Builder(this)
+                                .setTitle("Install: " + mod.title)
+                                .setMessage(fileName)
+                                .setPositiveButton("Install", (d, w) -> {
+                                    ModVersion.VersionFile file = new ModVersion.VersionFile();
+                                    file.url = url;
+                                    file.filename = fileName;
+                                    ModVersion fakeVersion = new ModVersion();
+                                    fakeVersion.versionNumber = fileName;
+                                    fakeVersion.dependencies = new java.util.ArrayList<>();
+                                    startDownload(mod, fakeVersion, file);
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                        });
+                    }, error2 -> handler.post(() ->
+                        Toast.makeText(this, "CF Error: " + error2, Toast.LENGTH_SHORT).show()
+                    ));
+                });
+            }, error -> handler.post(() -> {
+                loading.dismiss();
+                Toast.makeText(this, "CF Error: " + error, Toast.LENGTH_SHORT).show();
+            }));
+            return;
+        }
         api.getVersions(mod.projectId, version, loader, versions -> {
             handler.post(() -> {
                 loading.dismiss();
