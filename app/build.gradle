@@ -3,10 +3,12 @@ plugins {
 }
 
 android {
+    buildFeatures { buildConfig = true }
     compileSdk 34
     namespace 'com.cuinstaller.app'
 
     defaultConfig {
+        buildConfigField "String", "CURSEFORGE_API_KEY", """ + (System.getenv("CURSEFORGE_API_KEY") ?: "") + """
         applicationId "com.cuinstaller.app"
         minSdk 24
         targetSdk 34
