@@ -125,7 +125,7 @@ public class ModrinthApi {
         try { return java.net.URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
     public void getGameVersions(OnSuccess<List<String>> onSuccess, OnError onError) {
-        executor.execute(() -> {
+        new Thread(() -> {
             try {
                 Request request = new Request.Builder()
                         .url("https://api.modrinth.com/v2/tag/game_version")
@@ -145,7 +145,7 @@ public class ModrinthApi {
                     onSuccess.onSuccess(versions);
                 }
             } catch (Exception e) { onError.onError(e.getMessage()); }
-        });
+        }).start();
     }
 
 }
