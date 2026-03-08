@@ -125,3 +125,26 @@ public class ModrinthApi {
         try { return java.net.URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
 }
+    public void getGameVersions(OnSuccess<List<String>> onSuccess, OnError onError) {
+        executor.execute(() -> {
+            try {
+                Request request = new Request.Builder()
+                        .url("https://api.modrinth.com/v2/tag/game_version")
+                        .header("User-Agent", "CuInstaller/1.0")
+                        .build();
+                try (Response response = client.newCall(request).execute()) {
+                    if (!response.isSuccessful()) { onError.onError("HTTP " + response.code()); return; }
+                    com.google.gson.reflect.TypeToken<List<com.google.gson.JsonObject>> token = new com.google.gson.reflect.TypeToken<>(){};
+                    List<com.google.gson.JsonObject> tags = gson.fromJson(response.body().string(), token.getType());
+                    List<String> versions = new java.util.ArrayList<>();
+                    versions.add("Any");
+                    for (com.google.gson.JsonObject tag : tags) {
+                        if ("release".equals(tag.get("version_type").getAsString())) {
+                            versions.add(tag.get("version").getAsString());
+                        }
+                    }
+                    onSuccess.onSuccess(versions);
+                }
+            } catch (Exception e) { onError.onError(e.getMessage()); }
+        });
+    }
