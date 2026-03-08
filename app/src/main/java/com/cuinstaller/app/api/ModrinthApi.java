@@ -35,7 +35,7 @@ public class ModrinthApi {
     }
 
     public void searchMods(String query, String gameVersion, String loader,
-                           int offset, Callback<SearchResponse> callback) {
+                           int offset, String projectType, Callback<SearchResponse> callback) {
         new Thread(() -> {
             try {
                 StringBuilder url = new StringBuilder(BASE + "/search?facets=[[\"project_type:mod\"]]");
