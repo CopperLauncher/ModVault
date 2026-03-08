@@ -437,7 +437,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDownload(ModResult mod, ModVersion version, ModVersion.VersionFile file) {
-        java.io.File modsDir = getModsDir();
+        java.io.File modsDir = getTargetDir();
         if (modsDir == null) { showFolderPickerPrompt(); return; }
 
         ProgressDialog progress = new ProgressDialog(this);
@@ -505,6 +505,21 @@ public class MainActivity extends AppCompatActivity {
                 name.contains(mod.projectId.toLowerCase())) return true;
         }
         return false;
+    }
+
+    private java.io.File getTargetDir() {
+        java.io.File base = getModsDir();
+        if (base == null) return null;
+        java.io.File target;
+        if ("resourcepack".equals(currentProjectType)) {
+            target = new java.io.File(base.getParent(), "resourcepacks");
+        } else if ("shader".equals(currentProjectType)) {
+            target = new java.io.File(base.getParent(), "shaderpacks");
+        } else {
+            return base;
+        }
+        if (!target.exists()) target.mkdirs();
+        return target;
     }
 
     private java.io.File getModsDir() {
