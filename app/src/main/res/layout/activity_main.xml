@@ -62,7 +62,7 @@
                     android:layout_height="42dp"
                     android:layout_weight="1"
                     android:hint="Search mods…"
-                    android:hintTextColor="#888"
+                    android:textColorHint="#888888"
                     android:textColor="#FFFFFF"
                     android:background="@drawable/bg_search"
                     android:paddingHorizontal="14dp"
@@ -261,7 +261,6 @@
         android:background="#1A1A2E"
         app:itemTextColor="#AAAAAA"
         app:itemIconTint="@drawable/bottom_nav_tint"
-        app:itemActiveIndicatorColor="#7C5CBF"
         app:menu="@menu/bottom_nav_menu"/>
 
 </LinearLayout>
