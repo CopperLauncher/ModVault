@@ -273,13 +273,13 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     browseProgress.setVisibility(android.view.View.GONE);
                     isLoading = false;
-                    if (reset) modAdapter.clear();
+                    if (reset) { modAdapter.getMods().clear(); modAdapter.notifyDataSetChanged(); }
                     if (results.isEmpty()) {
                         if (modAdapter.getItemCount() == 0) emptyBrowse.setVisibility(android.view.View.VISIBLE);
                         btnLoadMore.setVisibility(android.view.View.GONE);
                     } else {
                         emptyBrowse.setVisibility(android.view.View.GONE);
-                        modAdapter.addAll(results);
+                        modAdapter.getMods().addAll(results); modAdapter.notifyDataSetChanged();
                         currentOffset += results.size();
                         btnLoadMore.setVisibility(android.view.View.VISIBLE);
                     }

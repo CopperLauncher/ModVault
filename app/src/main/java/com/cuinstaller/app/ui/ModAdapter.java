@@ -70,6 +70,7 @@ public class ModAdapter extends RecyclerView.Adapter<ModAdapter.ModViewHolder> {
 
     @Override
     public int getItemCount() { return mods.size(); }
+    public List<ModResult> getMods() { return mods; }
 
     private String formatDownloads(int n) {
         if (n >= 1_000_000) return String.format("%.1fM", n / 1_000_000f);
