@@ -46,13 +46,45 @@
             android:orientation="vertical"
             android:visibility="visible">
 
-            <!-- Search Bar -->
+            <!-- Source Toggle -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp"
                 android:paddingTop="10dp"
+                android:paddingBottom="4dp"
+                android:background="#1A120A">
+                <Button
+                    android:id="@+id/btn_modrinth"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="Modrinth"
+                    android:textSize="13sp"
+                    android:backgroundTint="#B87333"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginEnd="4dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
+                <Button
+                    android:id="@+id/btn_curseforge"
+                    android:layout_width="0dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:text="CurseForge"
+                    android:textSize="13sp"
+                    android:backgroundTint="#241810"
+                    android:textColor="#AAAAAA"
+                    android:layout_marginStart="4dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
+            </LinearLayout>
+            <!-- Search Bar -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingTop="6dp"
                 android:paddingBottom="6dp"
                 android:background="#1A120A">
 
