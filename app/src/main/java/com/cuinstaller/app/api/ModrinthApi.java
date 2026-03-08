@@ -26,7 +26,14 @@ public class ModrinthApi {
         void onError(String error);
     }
 
-    /** Search mods on Modrinth */
+    public interface OnSuccess<T> {
+        void onSuccess(T result);
+    }
+
+    public interface OnError {
+        void onError(String error);
+    }
+
     public void searchMods(String query, String gameVersion, String loader,
                            int offset, Callback<SearchResponse> callback) {
         new Thread(() -> {
@@ -38,9 +45,7 @@ public class ModrinthApi {
                 if (!gameVersion.isEmpty()) {
                     url = new StringBuilder(BASE + "/search");
                     url.append("?facets=[[\"project_type:mod\"],[\"versions:").append(gameVersion).append("\"]");
-                    if (!loader.isEmpty()) {
-                        url.append(",[\"categories:").append(loader).append("\"]");
-                    }
+                    if (!loader.isEmpty()) url.append(",[\"categories:").append(loader).append("\"]");
                     url.append("]");
                     url.append("&query=").append(query.isEmpty() ? "" : encode(query));
                     url.append("&limit=20&offset=").append(offset);
@@ -57,12 +62,8 @@ public class ModrinthApi {
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        callback.onError("Server error: " + response.code());
-                        return;
-                    }
-                    String body = response.body().string();
-                    SearchResponse result = gson.fromJson(body, SearchResponse.class);
+                    if (!response.isSuccessful()) { callback.onError("Server error: " + response.code()); return; }
+                    SearchResponse result = gson.fromJson(response.body().string(), SearchResponse.class);
                     callback.onSuccess(result);
                 }
             } catch (IOException e) {
@@ -71,9 +72,8 @@ public class ModrinthApi {
         }).start();
     }
 
-    /** Get versions for a project, filtered by game version and loader */
     public void getVersions(String projectId, String gameVersion, String loader,
-                            Callback<List<ModVersion>> callback, Callback<String> errorCallback) {
+                            OnSuccess<List<ModVersion>> onSuccess, OnError onError) {
         new Thread(() -> {
             try {
                 StringBuilder url = new StringBuilder(BASE + "/project/" + projectId + "/version");
@@ -93,22 +93,17 @@ public class ModrinthApi {
                         .build();
 
                 try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        errorCallback.onSuccess("Server error: " + response.code());
-                        return;
-                    }
-                    String body = response.body().string();
-                    List<ModVersion> versions = gson.fromJson(body,
+                    if (!response.isSuccessful()) { onError.onError("Server error: " + response.code()); return; }
+                    List<ModVersion> versions = gson.fromJson(response.body().string(),
                             new TypeToken<List<ModVersion>>(){}.getType());
-                    callback.onSuccess(versions);
+                    onSuccess.onSuccess(versions);
                 }
             } catch (IOException e) {
-                errorCallback.onSuccess("Network error: " + e.getMessage());
+                onError.onError("Network error: " + e.getMessage());
             }
         }).start();
     }
 
-    /** Get a single project by ID to get its details */
     public void getProject(String projectId, Callback<ModResult> callback) {
         new Thread(() -> {
             try {
@@ -116,15 +111,9 @@ public class ModrinthApi {
                         .url(BASE + "/project/" + projectId)
                         .header("User-Agent", USER_AGENT)
                         .build();
-
                 try (Response response = client.newCall(request).execute()) {
-                    if (!response.isSuccessful()) {
-                        callback.onError("Server error: " + response.code());
-                        return;
-                    }
-                    String body = response.body().string();
-                    ModResult result = gson.fromJson(body, ModResult.class);
-                    callback.onSuccess(result);
+                    if (!response.isSuccessful()) { callback.onError("Server error: " + response.code()); return; }
+                    callback.onSuccess(gson.fromJson(response.body().string(), ModResult.class));
                 }
             } catch (IOException e) {
                 callback.onError("Network error: " + e.getMessage());
@@ -133,10 +122,6 @@ public class ModrinthApi {
     }
 
     private String encode(String s) {
-        try {
-            return java.net.URLEncoder.encode(s, "UTF-8");
-        } catch (Exception e) {
-            return s;
-        }
+        try { return java.net.URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
 }
