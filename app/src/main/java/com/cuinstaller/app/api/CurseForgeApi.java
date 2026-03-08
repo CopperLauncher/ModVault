@@ -50,6 +50,7 @@ public class CurseForgeApi {
                         JsonObject logo = mod.has("logo") && !mod.get("logo").isJsonNull()
                                 ? mod.getAsJsonObject("logo") : null;
                         r.iconUrl = logo != null ? logo.get("thumbnailUrl").getAsString() : null;
+                        r.downloads = mod.has("downloadCount") ? mod.get("downloadCount").getAsInt() : 0;
                         r.source = "curseforge";
                         results.add(r);
                     }
