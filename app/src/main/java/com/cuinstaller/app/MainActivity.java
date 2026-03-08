@@ -52,7 +52,9 @@ public class MainActivity extends AppCompatActivity {
     private final ModrinthApi api = new ModrinthApi();
     private final CurseForgeApi curseForgeApi = new CurseForgeApi();
     private boolean useCurseForge = false;
+    private String currentProjectType = "mod";
     private Button btnModrinth, btnCurseForge;
+    private Button btnTypeMods, btnTypeResourcepack, btnTypeShader;
     private final ModDownloader downloader = new ModDownloader();
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -79,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
         setupSearch();
         setupBrowseRecycler();
         setupSourceToggle();
+        setupTypeToggle();
         setupInstalledRecycler();
         setupSettings();
 
@@ -108,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
         browseProgress  = findViewById(R.id.browse_progress);
         btnModrinth = findViewById(R.id.btn_modrinth);
         btnCurseForge = findViewById(R.id.btn_curseforge);
+        btnTypeMods = findViewById(R.id.btn_type_mods);
+        btnTypeResourcepack = findViewById(R.id.btn_type_resourcepack);
+        btnTypeShader = findViewById(R.id.btn_type_shader);
         btnLoadMore     = findViewById(R.id.btn_load_more);
         btnChooseFolder = findViewById(R.id.btn_choose_folder);
     }
@@ -181,6 +187,32 @@ public class MainActivity extends AppCompatActivity {
 
         btnLoadMore = findViewById(R.id.btn_load_more);
         btnLoadMore.setOnClickListener(v -> searchMods(false));
+    }
+
+    private void setupTypeToggle() {
+        android.content.res.ColorStateList active = android.content.res.ColorStateList.valueOf(0xFFB87333);
+        android.content.res.ColorStateList inactive = android.content.res.ColorStateList.valueOf(0xFF241810);
+        btnTypeMods.setOnClickListener(v -> {
+            currentProjectType = "mod";
+            btnTypeMods.setBackgroundTintList(active); btnTypeMods.setTextColor(0xFFFFFFFF);
+            btnTypeResourcepack.setBackgroundTintList(inactive); btnTypeResourcepack.setTextColor(0xFFAAAAAA);
+            btnTypeShader.setBackgroundTintList(inactive); btnTypeShader.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
+        btnTypeResourcepack.setOnClickListener(v -> {
+            currentProjectType = "resourcepack";
+            btnTypeResourcepack.setBackgroundTintList(active); btnTypeResourcepack.setTextColor(0xFFFFFFFF);
+            btnTypeMods.setBackgroundTintList(inactive); btnTypeMods.setTextColor(0xFFAAAAAA);
+            btnTypeShader.setBackgroundTintList(inactive); btnTypeShader.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
+        btnTypeShader.setOnClickListener(v -> {
+            currentProjectType = "shader";
+            btnTypeShader.setBackgroundTintList(active); btnTypeShader.setTextColor(0xFFFFFFFF);
+            btnTypeMods.setBackgroundTintList(inactive); btnTypeMods.setTextColor(0xFFAAAAAA);
+            btnTypeResourcepack.setBackgroundTintList(inactive); btnTypeResourcepack.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
     }
 
     private void setupSourceToggle() {
@@ -269,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
         String loader  = getSelectedLoader();
 
         if (useCurseForge) {
-            curseForgeApi.searchMods(currentQuery, version, loader, currentOffset, results -> {
+            curseForgeApi.searchMods(currentQuery, version, loader, currentOffset, currentProjectType, results -> {
                 runOnUiThread(() -> {
                     browseProgress.setVisibility(android.view.View.GONE);
                     isLoading = false;
@@ -291,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
             }));
             return;
         }
-        api.searchMods(currentQuery, version, loader, currentOffset, new ModrinthApi.Callback<SearchResponse>() {
+        api.searchMods(currentQuery, version, loader, currentOffset, currentProjectType, new ModrinthApi.Callback<SearchResponse>() {
             public void onSuccess(SearchResponse result) {
                 handler.post(() -> {
                     isLoading = false;
