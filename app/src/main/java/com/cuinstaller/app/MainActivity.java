@@ -158,7 +158,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         AdapterView.OnItemSelectedListener filterListener = new AdapterView.OnItemSelectedListener() {
+            boolean ready = false;
             public void onItemSelected(AdapterView<?> a, View v, int p, long id) {
+                if (!ready) { ready = true; return; }
                 saveFilters();
                 searchMods(true);
             }
