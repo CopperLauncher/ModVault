@@ -420,7 +420,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e("CuInstaller", "getRealPathFromUri failed: " + e.getMessage());
+            android.util.Log.e("ModVault", "getRealPathFromUri failed: " + e.getMessage());
         }
         return null;
     }
@@ -454,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
     private void showFolderPickerPrompt() {
         new AlertDialog.Builder(this)
             .setTitle("Choose Mods Folder")
-            .setMessage("CuInstaller needs to know where your /mods folder is. Please select it now.")
+            .setMessage("ModVault needs to know where your /mods folder is. Please select it now.")
             .setPositiveButton("Choose Folder", (d, w) -> openFolderPicker())
             .setNegativeButton("Later", null)
             .show();

@@ -16,7 +16,7 @@ import okhttp3.Response;
 public class ModrinthApi {
 
     private static final String BASE = "https://api.modrinth.com/v2";
-    private static final String USER_AGENT = "CuInstaller/1.0 (github.com/copperlauncher)";
+    private static final String USER_AGENT = "ModVault/1.0 (github.com/copperlauncher)";
 
     private final OkHttpClient client = new OkHttpClient();
     private final Gson gson = new Gson();
