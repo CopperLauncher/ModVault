@@ -84,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
             showFolderPickerPrompt();
         } else {
             updateFolderLabel();
-            searchMods(true);
+            // Wait for versions to load before searching
         }
     }
 
@@ -139,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
                 if (!savedVer.isEmpty()) {
                     int idx = versions.indexOf(savedVer);
                     if (idx >= 0) spinnerVersion.setSelection(idx);
+                }
+                if (prefs.hasModsFolder()) {
+                    searchMods(true);
                 }
             });
         }, error -> runOnUiThread(() ->
