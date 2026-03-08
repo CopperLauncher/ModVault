@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_primary">#7C5CBF</color>
-    <color name="background_dark">#0F0F0F</color>
-    <color name="surface_dark">#1A1A2E</color>
-    <color name="card_dark">#1E1E3A</color>
+    <!-- CopperLauncher Theme -->
+    <color name="purple_primary">#B87333</color>      <!-- Copper orange -->
+    <color name="copper_accent">#E8955A</color>        <!-- Light copper -->
+    <color name="copper_dark">#7A4A1E</color>          <!-- Dark copper -->
+    <color name="background_dark">#0D0D0D</color>      <!-- Near black -->
+    <color name="surface_dark">#1A120A</color>         <!-- Dark brown-black -->
+    <color name="card_dark">#241810</color>            <!-- Dark copper card -->
     <color name="text_primary">#FFFFFF</color>
-    <color name="text_secondary">#AAAAAA</color>
+    <color name="text_secondary">#C4956A</color>       <!-- Warm copper text -->
 </resources>
