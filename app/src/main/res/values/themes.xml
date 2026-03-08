@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.CuInstaller" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="Theme.ModVault" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/purple_primary</item>
         <item name="colorPrimaryVariant">#5C3D9E</item>
         <item name="colorOnPrimary">@color/text_primary</item>

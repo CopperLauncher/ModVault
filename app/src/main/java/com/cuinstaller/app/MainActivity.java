@@ -58,9 +58,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean isLoading = false;
 
     private static final String[] GAME_VERSIONS = {
-        "Any", "1.21.4", "1.21.3", "1.21.1", "1.21", "1.20.6", "1.20.4",
-        "1.20.2", "1.20.1", "1.20", "1.19.4", "1.19.2", "1.18.2",
-        "1.17.1", "1.16.5", "1.12.2"
     };
     private static final String[] LOADERS = {
         "Any", "fabric", "forge", "neoforge", "quilt"
@@ -130,10 +127,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupFilters() {
-        ArrayAdapter<String> vAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, GAME_VERSIONS);
-        vAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerVersion.setAdapter(vAdapter);
+        // Load versions dynamically from Modrinth
+        api.getGameVersions(versions -> {
+            String[] versionArray = versions.toArray(new String[0]);
+            runOnUiThread(() -> {
+                ArrayAdapter<String> vAdapter = new ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_item, versionArray);
+                vAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerVersion.setAdapter(vAdapter);
+                String savedVer = prefs.getGameVersion();
+                if (!savedVer.isEmpty()) {
+                    int idx = versions.indexOf(savedVer);
+                    if (idx >= 0) spinnerVersion.setSelection(idx);
+                }
+            });
+        }, error -> runOnUiThread(() ->
+            Toast.makeText(this, "Failed to load versions", Toast.LENGTH_SHORT).show()
+        ));
 
         ArrayAdapter<String> lAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, LOADERS);
@@ -141,19 +151,16 @@ public class MainActivity extends AppCompatActivity {
         spinnerLoader.setAdapter(lAdapter);
 
         // Restore saved filters
-        String savedVer = prefs.getGameVersion();
         String savedLoader = prefs.getLoader();
-        if (!savedVer.isEmpty()) {
-            int idx = Arrays.asList(GAME_VERSIONS).indexOf(savedVer);
-            if (idx >= 0) spinnerVersion.setSelection(idx);
-        }
         if (!savedLoader.isEmpty()) {
             int idx = Arrays.asList(LOADERS).indexOf(savedLoader);
             if (idx >= 0) spinnerLoader.setSelection(idx);
         }
 
         AdapterView.OnItemSelectedListener filterListener = new AdapterView.OnItemSelectedListener() {
+            boolean ready = false;
             public void onItemSelected(AdapterView<?> a, View v, int p, long id) {
+                if (!ready) { ready = true; return; }
                 saveFilters();
                 searchMods(true);
             }
@@ -415,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e("CuInstaller", "getRealPathFromUri failed: " + e.getMessage());
+            android.util.Log.e("ModVault", "getRealPathFromUri failed: " + e.getMessage());
         }
         return null;
     }
@@ -449,7 +456,7 @@ public class MainActivity extends AppCompatActivity {
     private void showFolderPickerPrompt() {
         new AlertDialog.Builder(this)
             .setTitle("Choose Mods Folder")
-            .setMessage("CuInstaller needs to know where your /mods folder is. Please select it now.")
+            .setMessage("ModVault needs to know where your /mods folder is. Please select it now.")
             .setPositiveButton("Choose Folder", (d, w) -> openFolderPicker())
             .setNegativeButton("Later", null)
             .show();

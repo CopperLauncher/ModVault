@@ -1,7 +1,7 @@
-# CuInstaller
+# ModVault
 
 <p align="center">
-  <img src="app/src/main/res/mipmap-xxhdpi/ic_launcher.png" width="100" alt="CuInstaller Logo"/>
+  <img src="app/src/main/res/mipmap-xxhdpi/ic_launcher.png" width="100" alt="ModVault Logo"/>
 </p>
 
 <p align="center">
@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/copperlauncher/CuInstaller/actions"><img src="https://github.com/copperlauncher/CuInstaller/workflows/Android%20CI/badge.svg" alt="Android CI"/></a>
+  <a href="https://github.com/copperlauncher/ModVault/actions"><img src="https://github.com/copperlauncher/ModVault/workflows/Android%20CI/badge.svg" alt="Android CI"/></a>
   <img src="https://img.shields.io/badge/platform-Android-green" alt="Platform"/>
   <img src="https://img.shields.io/badge/minSdk-26-blue" alt="Min SDK"/>
   <img src="https://img.shields.io/badge/powered%20by-Modrinth-1bd96a" alt="Modrinth"/>
@@ -47,8 +47,8 @@ Grab the latest APK from the [Actions tab](../../actions) → latest build → *
 ### Steps
 
 ```bash
-git clone https://github.com/copperlauncher/CuInstaller.git
-cd CuInstaller
+git clone https://github.com/copperlauncher/ModVault.git
+cd ModVault
 ./gradlew assembleDebug
 ```
 
@@ -57,7 +57,7 @@ The APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
 ## Usage
 
 1. Install the APK on your Android device
-2. Open CuInstaller
+2. Open ModVault
 3. Tap **Settings** → **Choose Mods Folder** and select your launcher's `/mods` directory
 4. Browse or search for mods in the **Browse** tab
 5. Tap **Install** and select your desired version
@@ -81,7 +81,7 @@ The APK will be at `app/build/outputs/apk/debug/app-debug.apk`.
 
 ## Modrinth Compliance
 
-CuInstaller fully complies with Modrinth's API Terms of Service:
+ModVault fully complies with Modrinth's API Terms of Service:
 
 - ✔️ Uses the official public Modrinth API
 - ✔️ Does not bypass downloads or monetization
