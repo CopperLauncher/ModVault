@@ -18,11 +18,14 @@ public class CurseForgeApi {
     private final Gson gson = new Gson();
 
     public void searchMods(String query, String gameVersion, String loader,
-                           int offset, ModrinthApi.OnSuccess<List<ModResult>> onSuccess,
+                           int offset, String projectType, ModrinthApi.OnSuccess<List<ModResult>> onSuccess,
                            ModrinthApi.OnError onError) {
         new Thread(() -> {
             try {
-                StringBuilder url = new StringBuilder(BASE + "/mods/search?gameId=432&pageSize=20&index=" + offset);
+                int classId = 6; // mods
+                if ("resourcepack".equals(projectType)) classId = 12;
+                else if ("shader".equals(projectType)) classId = 6552;
+                StringBuilder url = new StringBuilder(BASE + "/mods/search?gameId=432&classId=" + classId + "&pageSize=20&index=" + offset);
                 if (query != null && !query.isEmpty()) url.append("&searchFilter=").append(encode(query));
                 if (gameVersion != null && !gameVersion.isEmpty() && !gameVersion.equals("Any"))
                     url.append("&gameVersion=").append(encode(gameVersion));

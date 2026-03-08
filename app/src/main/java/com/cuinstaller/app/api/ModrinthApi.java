@@ -35,32 +35,24 @@ public class ModrinthApi {
     }
 
     public void searchMods(String query, String gameVersion, String loader,
-                           int offset, Callback<SearchResponse> callback) {
+                           int offset, String projectType, Callback<SearchResponse> callback) {
         new Thread(() -> {
             try {
-                StringBuilder url = new StringBuilder(BASE + "/search?facets=[[\"project_type:mod\"]]");
-                url.append("&query=").append(query.isEmpty() ? "" : encode(query));
+                String type = (projectType == null || projectType.isEmpty()) ? "mod" : projectType;
+                StringBuilder facets = new StringBuilder("[[\"project_type:" + type + "\"]");
+                if (gameVersion != null && !gameVersion.isEmpty() && !gameVersion.equals("Any"))
+                    facets.append(",[\"versions:").append(gameVersion).append("\"]");
+                if (loader != null && !loader.isEmpty() && !loader.equals("Any"))
+                    facets.append(",[\"categories:").append(loader).append("\"]");
+                facets.append("]");
+                StringBuilder url = new StringBuilder(BASE + "/search");
+                url.append("?facets=").append(facets);
+                url.append("&query=").append(query == null || query.isEmpty() ? "" : encode(query));
                 url.append("&limit=20&offset=").append(offset);
-
-                if (!gameVersion.isEmpty()) {
-                    url = new StringBuilder(BASE + "/search");
-                    url.append("?facets=[[\"project_type:mod\"],[\"versions:").append(gameVersion).append("\"]");
-                    if (!loader.isEmpty()) url.append(",[\"categories:").append(loader).append("\"]");
-                    url.append("]");
-                    url.append("&query=").append(query.isEmpty() ? "" : encode(query));
-                    url.append("&limit=20&offset=").append(offset);
-                } else if (!loader.isEmpty()) {
-                    url = new StringBuilder(BASE + "/search");
-                    url.append("?facets=[[\"project_type:mod\"],[\"categories:").append(loader).append("\"]]");
-                    url.append("&query=").append(query.isEmpty() ? "" : encode(query));
-                    url.append("&limit=20&offset=").append(offset);
-                }
-
                 Request request = new Request.Builder()
                         .url(url.toString())
                         .header("User-Agent", USER_AGENT)
                         .build();
-
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) { callback.onError("Server error: " + response.code()); return; }
                     SearchResponse result = gson.fromJson(response.body().string(), SearchResponse.class);

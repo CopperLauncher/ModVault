@@ -5,6 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.Manifest;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import android.content.pm.PackageManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.Editable;
@@ -52,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private final ModrinthApi api = new ModrinthApi();
     private final CurseForgeApi curseForgeApi = new CurseForgeApi();
     private boolean useCurseForge = false;
+    private String currentProjectType = "mod";
     private Button btnModrinth, btnCurseForge;
+    private Button btnTypeMods, btnTypeResourcepack, btnTypeShader;
     private final ModDownloader downloader = new ModDownloader();
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -73,12 +79,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         prefs = new PrefManager(this);
+        requestStoragePermissionIfNeeded();
         initViews();
         setupBottomNav();
         setupFilters();
         setupSearch();
         setupBrowseRecycler();
         setupSourceToggle();
+        setupTypeToggle();
         setupInstalledRecycler();
         setupSettings();
 
@@ -90,6 +98,21 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateFolderLabel();
             // Wait for versions to load before searching
+        }
+    }
+
+    private void requestStoragePermissionIfNeeded() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            // Android 11+ uses SAF, no runtime permission needed
+            return;
+        }
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                }, 100);
         }
     }
 
@@ -108,6 +131,9 @@ public class MainActivity extends AppCompatActivity {
         browseProgress  = findViewById(R.id.browse_progress);
         btnModrinth = findViewById(R.id.btn_modrinth);
         btnCurseForge = findViewById(R.id.btn_curseforge);
+        btnTypeMods = findViewById(R.id.btn_type_mods);
+        btnTypeResourcepack = findViewById(R.id.btn_type_resourcepack);
+        btnTypeShader = findViewById(R.id.btn_type_shader);
         btnLoadMore     = findViewById(R.id.btn_load_more);
         btnChooseFolder = findViewById(R.id.btn_choose_folder);
     }
@@ -181,6 +207,32 @@ public class MainActivity extends AppCompatActivity {
 
         btnLoadMore = findViewById(R.id.btn_load_more);
         btnLoadMore.setOnClickListener(v -> searchMods(false));
+    }
+
+    private void setupTypeToggle() {
+        android.content.res.ColorStateList active = android.content.res.ColorStateList.valueOf(0xFFB87333);
+        android.content.res.ColorStateList inactive = android.content.res.ColorStateList.valueOf(0xFF241810);
+        btnTypeMods.setOnClickListener(v -> {
+            currentProjectType = "mod";
+            btnTypeMods.setBackgroundTintList(active); btnTypeMods.setTextColor(0xFFFFFFFF);
+            btnTypeResourcepack.setBackgroundTintList(inactive); btnTypeResourcepack.setTextColor(0xFFAAAAAA);
+            btnTypeShader.setBackgroundTintList(inactive); btnTypeShader.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
+        btnTypeResourcepack.setOnClickListener(v -> {
+            currentProjectType = "resourcepack";
+            btnTypeResourcepack.setBackgroundTintList(active); btnTypeResourcepack.setTextColor(0xFFFFFFFF);
+            btnTypeMods.setBackgroundTintList(inactive); btnTypeMods.setTextColor(0xFFAAAAAA);
+            btnTypeShader.setBackgroundTintList(inactive); btnTypeShader.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
+        btnTypeShader.setOnClickListener(v -> {
+            currentProjectType = "shader";
+            btnTypeShader.setBackgroundTintList(active); btnTypeShader.setTextColor(0xFFFFFFFF);
+            btnTypeMods.setBackgroundTintList(inactive); btnTypeMods.setTextColor(0xFFAAAAAA);
+            btnTypeResourcepack.setBackgroundTintList(inactive); btnTypeResourcepack.setTextColor(0xFFAAAAAA);
+            searchMods(true);
+        });
     }
 
     private void setupSourceToggle() {
@@ -269,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         String loader  = getSelectedLoader();
 
         if (useCurseForge) {
-            curseForgeApi.searchMods(currentQuery, version, loader, currentOffset, results -> {
+            curseForgeApi.searchMods(currentQuery, version, loader, currentOffset, currentProjectType, results -> {
                 runOnUiThread(() -> {
                     browseProgress.setVisibility(android.view.View.GONE);
                     isLoading = false;
@@ -291,7 +343,7 @@ public class MainActivity extends AppCompatActivity {
             }));
             return;
         }
-        api.searchMods(currentQuery, version, loader, currentOffset, new ModrinthApi.Callback<SearchResponse>() {
+        api.searchMods(currentQuery, version, loader, currentOffset, currentProjectType, new ModrinthApi.Callback<SearchResponse>() {
             public void onSuccess(SearchResponse result) {
                 handler.post(() -> {
                     isLoading = false;
@@ -332,6 +384,39 @@ public class MainActivity extends AppCompatActivity {
         loading.setMessage("Fetching versions…");
         loading.show();
 
+        if ("curseforge".equals(mod.source)) {
+            curseForgeApi.getLatestFile(mod.projectId, version, loader, fileObj -> {
+                handler.post(() -> {
+                    loading.dismiss();
+                    String fileId = fileObj.get("id").getAsString();
+                    String fileName = fileObj.get("fileName").getAsString();
+                    curseForgeApi.getDownloadUrl(mod.projectId, fileId, url -> {
+                        handler.post(() -> {
+                            new AlertDialog.Builder(this)
+                                .setTitle("Install: " + mod.title)
+                                .setMessage(fileName)
+                                .setPositiveButton("Install", (d, w) -> {
+                                    ModVersion.VersionFile file = new ModVersion.VersionFile();
+                                    file.url = url;
+                                    file.filename = fileName;
+                                    ModVersion fakeVersion = new ModVersion();
+                                    fakeVersion.versionNumber = fileName;
+                                    fakeVersion.dependencies = new java.util.ArrayList<>();
+                                    startDownload(mod, fakeVersion, file);
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                        });
+                    }, error2 -> handler.post(() ->
+                        Toast.makeText(this, "CF Error: " + error2, Toast.LENGTH_SHORT).show()
+                    ));
+                });
+            }, error -> handler.post(() -> {
+                loading.dismiss();
+                Toast.makeText(this, "CF Error: " + error, Toast.LENGTH_SHORT).show();
+            }));
+            return;
+        }
         api.getVersions(mod.projectId, version, loader, versions -> {
             handler.post(() -> {
                 loading.dismiss();
@@ -372,7 +457,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDownload(ModResult mod, ModVersion version, ModVersion.VersionFile file) {
-        java.io.File modsDir = getModsDir();
+        java.io.File modsDir = getTargetDir();
         if (modsDir == null) { showFolderPickerPrompt(); return; }
 
         ProgressDialog progress = new ProgressDialog(this);
@@ -440,6 +525,21 @@ public class MainActivity extends AppCompatActivity {
                 name.contains(mod.projectId.toLowerCase())) return true;
         }
         return false;
+    }
+
+    private java.io.File getTargetDir() {
+        java.io.File base = getModsDir();
+        if (base == null) return null;
+        java.io.File target;
+        if ("resourcepack".equals(currentProjectType)) {
+            target = new java.io.File(base.getParent(), "resourcepacks");
+        } else if ("shader".equals(currentProjectType)) {
+            target = new java.io.File(base.getParent(), "shaderpacks");
+        } else {
+            return base;
+        }
+        if (!target.exists()) target.mkdirs();
+        return target;
     }
 
     private java.io.File getModsDir() {

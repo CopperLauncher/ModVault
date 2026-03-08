@@ -78,6 +78,47 @@
                     android:layout_marginStart="4dp"
                     style="@style/Widget.MaterialComponents.Button"/>
             </LinearLayout>
+            <!-- Content Type Toggle -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="12dp"
+                android:paddingBottom="4dp"
+                android:background="#1A120A">
+                <Button
+                    android:id="@+id/btn_type_mods"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="Mods"
+                    android:textSize="12sp"
+                    android:backgroundTint="#B87333"
+                    android:textColor="#FFFFFF"
+                    android:layout_marginEnd="3dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
+                <Button
+                    android:id="@+id/btn_type_resourcepack"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="Resource Packs"
+                    android:textSize="12sp"
+                    android:backgroundTint="#241810"
+                    android:textColor="#AAAAAA"
+                    android:layout_marginEnd="3dp"
+                    style="@style/Widget.MaterialComponents.Button"/>
+                <Button
+                    android:id="@+id/btn_type_shader"
+                    android:layout_width="0dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:text="Shaders"
+                    android:textSize="12sp"
+                    android:backgroundTint="#241810"
+                    android:textColor="#AAAAAA"
+                    style="@style/Widget.MaterialComponents.Button"/>
+            </LinearLayout>
             <!-- Search Bar -->
             <LinearLayout
                 android:layout_width="match_parent"
