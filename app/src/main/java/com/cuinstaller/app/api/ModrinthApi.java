@@ -124,13 +124,12 @@ public class ModrinthApi {
     private String encode(String s) {
         try { return java.net.URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
-}
     public void getGameVersions(OnSuccess<List<String>> onSuccess, OnError onError) {
         executor.execute(() -> {
             try {
                 Request request = new Request.Builder()
                         .url("https://api.modrinth.com/v2/tag/game_version")
-                        .header("User-Agent", "CuInstaller/1.0")
+                        .header("User-Agent", "ModVault/1.0")
                         .build();
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) { onError.onError("HTTP " + response.code()); return; }
@@ -148,3 +147,5 @@ public class ModrinthApi {
             } catch (Exception e) { onError.onError(e.getMessage()); }
         });
     }
+
+}
