@@ -4,13 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#0F0F0F">
+    android:background="#0D0D0D">
 
     <!-- App Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
-        android:background="#1A1A2E"
+        android:background="#1A120A"
         android:gravity="center_vertical"
         android:paddingHorizontal="16dp"
         android:elevation="4dp">
@@ -54,7 +54,7 @@
                 android:paddingHorizontal="12dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="6dp"
-                android:background="#1A1A2E">
+                android:background="#1A120A">
 
                 <EditText
                     android:id="@+id/search_input"
@@ -78,7 +78,7 @@
                 android:orientation="horizontal"
                 android:paddingHorizontal="12dp"
                 android:paddingBottom="8dp"
-                android:background="#1A1A2E">
+                android:background="#1A120A">
 
                 <Spinner
                     android:id="@+id/spinner_version"
@@ -87,7 +87,7 @@
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/bg_spinner"
-                    android:popupBackground="#1E1E3A"
+                    android:popupBackground="#241810"
                     android:spinnerMode="dropdown"/>
 
                 <Spinner
@@ -96,7 +96,7 @@
                     android:layout_height="38dp"
                     android:layout_weight="1"
                     android:background="@drawable/bg_spinner"
-                    android:popupBackground="#1E1E3A"
+                    android:popupBackground="#241810"
                     android:spinnerMode="dropdown"/>
             </LinearLayout>
 
@@ -106,7 +106,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="3dp"
                 android:indeterminate="true"
-                android:indeterminateTint="#7C5CBF"
+                android:indeterminateTint="#B87333"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
                 android:visibility="gone"/>
 
@@ -139,7 +139,7 @@
                 android:layout_gravity="center_horizontal"
                 android:text="Load More"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#7C5CBF"
+                android:backgroundTint="#B87333"
                 android:layout_margin="10dp"
                 android:visibility="gone"/>
 
@@ -224,7 +224,7 @@
                 android:layout_height="wrap_content"
                 android:text="Choose Mods Folder"
                 android:textColor="#FFFFFF"
-                android:backgroundTint="#7C5CBF"/>
+                android:backgroundTint="#B87333"/>
 
             <View
                 android:layout_width="match_parent"
@@ -258,7 +258,7 @@
         android:id="@+id/bottom_nav"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#1A1A2E"
+        android:background="#1A120A"
         app:itemTextColor="#AAAAAA"
         app:itemIconTint="@drawable/bottom_nav_tint"
         app:menu="@menu/bottom_nav_menu"/>
