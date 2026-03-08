@@ -73,7 +73,7 @@ public class ModrinthApi {
 
     /** Get versions for a project, filtered by game version and loader */
     public void getVersions(String projectId, String gameVersion, String loader,
-                            Callback<List<ModVersion>> callback) {
+                            Callback<List<ModVersion>> callback, Callback<String> errorCallback) {
         new Thread(() -> {
             try {
                 StringBuilder url = new StringBuilder(BASE + "/project/" + projectId + "/version");
@@ -94,7 +94,7 @@ public class ModrinthApi {
 
                 try (Response response = client.newCall(request).execute()) {
                     if (!response.isSuccessful()) {
-                        callback.onError("Server error: " + response.code());
+                        errorCallback.onSuccess("Server error: " + response.code());
                         return;
                     }
                     String body = response.body().string();
@@ -103,7 +103,7 @@ public class ModrinthApi {
                     callback.onSuccess(versions);
                 }
             } catch (IOException e) {
-                callback.onError("Network error: " + e.getMessage());
+                errorCallback.onSuccess("Network error: " + e.getMessage());
             }
         }).start();
     }
