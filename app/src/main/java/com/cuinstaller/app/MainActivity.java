@@ -265,8 +265,8 @@ public class MainActivity extends AppCompatActivity {
         String[] basePaths = {
             android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/PojavLauncher/custom_instances",
-            android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/.minecraft/versions",
-            android.os.Environment.getExternalStorageDirectory() + "/Android/data/net.kdt.pojavlaunch/files/.minecraft/versions",
+            android.os.Environment.getExternalStorageDirectory() + "/games/CopperLauncher/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
         };
         for (String path : basePaths) {
             java.io.File dir = new java.io.File(path);
