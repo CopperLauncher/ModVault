@@ -58,7 +58,7 @@
                 <Button
                     android:id="@+id/btn_modrinth"
                     android:layout_width="0dp"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Modrinth"
                     android:textSize="13sp"
@@ -69,7 +69,7 @@
                 <Button
                     android:id="@+id/btn_curseforge"
                     android:layout_width="0dp"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="CurseForge"
                     android:textSize="13sp"
@@ -89,10 +89,10 @@
                 <Button
                     android:id="@+id/btn_type_mods"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Mods"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:backgroundTint="#B87333"
                     android:textColor="#FFFFFF"
                     android:layout_marginEnd="3dp"
@@ -100,10 +100,10 @@
                 <Button
                     android:id="@+id/btn_type_resourcepack"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Resource Packs"
-                    android:textSize="12sp"
+                    android:text="Res Packs"
+                    android:textSize="11sp"
                     android:backgroundTint="#241810"
                     android:textColor="#AAAAAA"
                     android:layout_marginEnd="3dp"
@@ -111,10 +111,10 @@
                 <Button
                     android:id="@+id/btn_type_shader"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Shaders"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:backgroundTint="#241810"
                     android:textColor="#AAAAAA"
                     style="@style/Widget.MaterialComponents.Button"/>
@@ -272,6 +272,33 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp"/>
 
+            <!-- Instances Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Instance"
+                android:textColor="#BBBBBB"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/instances_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"/>
+            <Button
+                android:id="@+id/btn_scan_instances"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan for Instances"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#B87333"
+                android:layout_marginBottom="16dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#333"
+                android:layout_marginBottom="16dp"/>
+            <!-- Manual Folder Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -286,7 +313,7 @@
                 android:layout_height="wrap_content"
                 android:text="No folder selected"
                 android:textColor="#888888"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:background="@drawable/bg_search"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"/>
@@ -310,17 +337,41 @@
                 android:layout_height="wrap_content"
                 android:text="ModVault v1.0"
                 android:textColor="#555"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:gravity="center"/>
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Powered by Modrinth API"
-                android:textColor="#555"
-                android:textSize="12sp"
+                android:text="Part of the CopperLauncher project"
+                android:textColor="#B87333"
+                android:textSize="11sp"
                 android:gravity="center"
                 android:layout_marginTop="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="github.com/CopperLauncher/ModVault"
+                android:textColor="#555"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:layout_marginTop="2dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="discord.com/invite/r8wUtzMzUe"
+                android:textColor="#555"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:layout_marginTop="2dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Powered by Modrinth API &amp; CurseForge API"
+                android:textColor="#444"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:layout_marginTop="6dp"/>
 
         </LinearLayout>
 
