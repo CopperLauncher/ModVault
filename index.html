@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ModVault — Minecraft Mods on Android</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --ore:#C8813A;--ore2:#E09A52;--ore-dim:#8B5520;
+  --black:#07060A;--deep:#0E0C14;--panel:#141020;
+  --card:#1A1528;--rim:#2A2240;
+  --text:#EDE8F5;--muted:#7A6E94;--green:#56E39F;
+}
+html{scroll-behavior:smooth}
+body{background:var(--black);color:var(--text);font-family:'Cabinet Grotesk',sans-serif;overflow-x:hidden}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--ore-dim);border-radius:3px}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.025) 2px,rgba(0,0,0,.025) 4px);pointer-events:none;z-index:9998}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:18px 56px;background:rgba(7,6,10,.75);backdrop-filter:blur(20px);border-bottom:1px solid rgba(200,129,58,.1)}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo img{width:30px;height:30px;border-radius:7px;object-fit:cover}
+.logo-text{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--ore)}
+.nav-links{display:flex;gap:28px;list-style:none;align-items:center}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-dl{background:var(--ore);color:#000!important;padding:9px 22px;border-radius:6px;font-weight:800!important;font-size:13px;transition:background .2s,transform .15s!important;letter-spacing:.03em}
+.nav-dl:hover{background:var(--ore2)!important;transform:translateY(-1px)}
+
+/* HERO */
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 460px;gap:0;align-items:center;padding:100px 56px 60px;position:relative;overflow:hidden;max-width:1280px;margin:0 auto}
+.hero-glow{position:absolute;top:-100px;right:-200px;width:900px;height:900px;background:radial-gradient(circle,rgba(200,129,58,.07) 0%,transparent 60%);pointer-events:none}
+.hero-left{position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(200,129,58,.1);border:1px solid rgba(200,129,58,.22);border-radius:100px;padding:5px 14px;font-size:12px;color:var(--ore2);margin-bottom:28px;font-weight:600;animation:up .5s ease both}
+.blink{width:7px;height:7px;background:var(--green);border-radius:50%;animation:blink 2s infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(72px,8vw,114px);line-height:.93;letter-spacing:2px;margin-bottom:24px;animation:up .5s .08s ease both}
+h1 em{color:var(--ore);font-style:normal}
+h1 .ghost{-webkit-text-stroke:1.5px rgba(200,129,58,.28);color:transparent}
+.hero-desc{font-size:17px;color:var(--muted);line-height:1.65;max-width:500px;margin-bottom:40px;animation:up .5s .16s ease both}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap;animation:up .5s .24s ease both;margin-bottom:32px}
+.btn-a{display:inline-flex;align-items:center;gap:9px;background:var(--ore);color:#000;padding:14px 28px;border-radius:8px;font-weight:800;font-size:15px;text-decoration:none;transition:background .2s,transform .15s,box-shadow .2s}
+.btn-a:hover{background:var(--ore2);transform:translateY(-2px);box-shadow:0 12px 40px rgba(200,129,58,.3)}
+.btn-b{display:inline-flex;align-items:center;gap:9px;background:transparent;color:var(--text);padding:14px 28px;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;border:1px solid var(--rim);transition:border-color .2s,color .2s}
+.btn-b:hover{border-color:var(--ore-dim);color:var(--ore2)}
+.hero-badges{display:flex;gap:8px;flex-wrap:wrap;animation:up .5s .32s ease both}
+.hero-badges img{height:22px;border-radius:3px}
+
+/* PHONE */
+.hero-right{position:relative;z-index:1;display:flex;justify-content:center;align-items:center;animation:up .6s .1s ease both}
+.phone-wrap{position:relative;width:230px}
+.phone-outer{background:var(--panel);border:2px solid var(--rim);border-radius:40px;padding:12px;box-shadow:0 0 0 1px rgba(200,129,58,.06),0 48px 120px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.04);position:relative;overflow:hidden}
+.phone-outer::before{content:'';position:absolute;top:0;left:20%;right:20%;height:1px;background:linear-gradient(90deg,transparent,rgba(200,129,58,.5),transparent)}
+.phone-screen{background:var(--deep);border-radius:28px;overflow:hidden;aspect-ratio:9/19.5;display:flex;flex-direction:column}
+.phone-status{display:flex;justify-content:space-between;padding:10px 16px 2px;font-size:9px;color:var(--muted)}
+.phone-topbar{display:flex;align-items:center;justify-content:space-between;padding:6px 12px 8px;background:rgba(20,16,32,.95);border-bottom:1px solid var(--rim)}
+.phone-logo{display:flex;align-items:center;gap:6px}
+.phone-logo img{width:18px;height:18px;border-radius:4px}
+.phone-logo span{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;color:var(--ore)}
+.phone-search{background:var(--card);border-radius:7px;margin:8px 10px;padding:7px 10px;font-size:10px;color:var(--muted);border:1px solid var(--rim);display:flex;align-items:center;gap:5px}
+.phone-chips{display:flex;gap:5px;padding:0 10px 8px;overflow:hidden}
+.chip{background:var(--card);border:1px solid var(--rim);border-radius:20px;padding:3px 8px;font-size:9px;color:var(--muted);flex-shrink:0}
+.chip.active{background:var(--ore);color:#000;border-color:var(--ore);font-weight:700}
+.phone-mods{flex:1;overflow:hidden;padding:0 8px;display:flex;flex-direction:column;gap:6px}
+.phone-mod{background:var(--card);border-radius:8px;padding:8px;display:flex;align-items:center;gap:8px;border:1px solid var(--rim)}
+.mod-icon{width:32px;height:32px;border-radius:7px;background:linear-gradient(135deg,var(--ore-dim),var(--ore));flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px}
+.mod-info{flex:1;overflow:hidden;min-width:0}
+.mod-name{font-size:10px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mod-sub{font-size:8px;color:var(--muted);margin-top:1px}
+.mod-btn{background:var(--ore);color:#000;border-radius:4px;padding:3px 8px;font-size:8px;font-weight:800;flex-shrink:0}
+.phone-nav{display:flex;justify-content:space-around;padding:8px 0 10px;border-top:1px solid var(--rim);background:var(--panel);margin-top:auto}
+.pnav{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:8px;color:var(--muted)}
+.pnav.active{color:var(--ore)}
+.pnav span{font-size:14px}
+.phone-glow{position:absolute;bottom:-50px;left:50%;transform:translateX(-50%);width:160px;height:80px;background:radial-gradient(ellipse,rgba(200,129,58,.2) 0%,transparent 70%);filter:blur(16px)}
+
+/* MARQUEE */
+.marquee-wrap{background:var(--ore);padding:13px 0;overflow:hidden;white-space:nowrap}
+.marquee-inner{display:inline-flex;gap:40px;animation:scroll 22s linear infinite}
+.marquee-item{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:3px;color:#000;display:flex;align-items:center;gap:10px}
+.marquee-item::before{content:'◆';font-size:9px;opacity:.4}
+@keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* SECTIONS */
+.wrap{max-width:1200px;margin:0 auto;padding:100px 56px}
+.tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--ore);margin-bottom:12px}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,6vw,72px);letter-spacing:1px;line-height:1;margin-bottom:16px}
+.sec-sub{color:var(--muted);font-size:16px;line-height:1.65;max-width:520px;margin-bottom:60px}
+
+/* FEATURES */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--rim);border:2px solid var(--rim);border-radius:16px;overflow:hidden}
+.feat{background:var(--deep);padding:32px 28px;transition:background .25s;position:relative;overflow:hidden}
+.feat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--ore),var(--ore2));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.feat:hover{background:var(--panel)}.feat:hover::after{transform:scaleX(1)}
+.feat-icon{font-size:30px;margin-bottom:14px}
+.feat-title{font-weight:800;font-size:15px;margin-bottom:7px}
+.feat-desc{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* STEPS */
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.steps-grid::before{content:'';position:absolute;top:31px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,transparent,var(--rim) 15%,var(--rim) 85%,transparent);z-index:0}
+.step-card{position:relative;z-index:1;padding:0 20px;text-align:center}
+.step-num-wrap{width:62px;height:62px;background:var(--panel);border:2px solid var(--rim);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--ore);transition:border-color .2s,background .2s}
+.step-card:hover .step-num-wrap{border-color:var(--ore);background:rgba(200,129,58,.08)}
+.step-t{font-weight:800;font-size:15px;margin-bottom:7px}
+.step-d{font-size:13px;color:var(--muted);line-height:1.6}
+
+/* SOURCES */
+.sources-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.source-card{background:var(--panel);border:1px solid var(--rim);border-radius:16px;padding:40px;transition:border-color .2s,transform .2s}
+.source-card:hover{border-color:var(--ore-dim);transform:translateY(-3px)}
+.source-logo{font-size:40px;margin-bottom:14px}
+.source-name{font-family:'Bebas Neue',sans-serif;font-size:34px;letter-spacing:1px;color:var(--ore);margin-bottom:8px}
+.source-desc{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:20px}
+.source-pill{display:inline-block;background:rgba(200,129,58,.1);border:1px solid rgba(200,129,58,.2);border-radius:100px;padding:4px 12px;font-size:11px;font-weight:700;color:var(--ore2);margin-right:8px;margin-bottom:8px}
+
+/* DOWNLOAD */
+.dl-band{background:var(--panel);border-top:1px solid var(--rim);border-bottom:1px solid var(--rim);padding:80px 56px}
+.dl-inner{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr auto;gap:64px;align-items:center}
+.dl-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(48px,7vw,88px);letter-spacing:1px;line-height:1;margin-bottom:12px}
+.dl-sub{color:var(--muted);font-size:15px;margin-bottom:32px;line-height:1.6}
+.dl-meta{display:flex;gap:36px;flex-wrap:wrap}
+.dl-meta-item{font-size:13px;color:var(--muted)}
+.dl-meta-item strong{color:var(--text);display:block;font-size:16px;font-weight:700;margin-bottom:2px}
+.qr-box{background:#fff;border-radius:12px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:10px;flex-shrink:0}
+.qr-label{font-size:10px;color:#555;font-weight:700;letter-spacing:.1em}
+
+/* FAQ */
+.faq-wrap{max-width:780px}
+.faq-item{border-bottom:1px solid var(--rim)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:22px 0;cursor:pointer;font-weight:700;font-size:16px;transition:color .2s;user-select:none}
+.faq-q:hover{color:var(--ore2)}
+.faq-icon{width:28px;height:28px;flex-shrink:0;border:1px solid var(--rim);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--ore);transition:transform .3s,border-color .2s}
+.faq-item.open .faq-icon{transform:rotate(45deg);border-color:var(--ore)}
+.faq-body{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq-item.open .faq-body{max-height:500px}
+.faq-body p{padding-bottom:22px;font-size:14px;color:var(--muted);line-height:1.8}
+.faq-body code{background:var(--card);border:1px solid var(--rim);border-radius:4px;padding:2px 8px;font-size:12px;color:var(--ore2)}
+.faq-body a{color:var(--ore2);text-decoration:none}
+
+/* FOOTER */
+footer{max-width:1200px;margin:0 auto;padding:48px 56px;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--rim);flex-wrap:wrap;gap:24px}
+.footer-brand{display:flex;align-items:center;gap:12px}
+.footer-brand img{width:36px;height:36px;border-radius:8px}
+.brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--ore)}
+.brand-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.footer-links{display:flex;gap:28px;flex-wrap:wrap}
+.footer-links a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:500;transition:color .2s}
+.footer-links a:hover{color:var(--ore2)}
+
+/* ANIM */
+@keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* RESPONSIVE */
+@media(max-width:960px){
+  .hero{grid-template-columns:1fr;padding:100px 28px 60px}
+  .hero-right{display:none}
+  .feat-grid{grid-template-columns:1fr 1fr}
+  .steps-grid{grid-template-columns:1fr 1fr;gap:32px}
+  .steps-grid::before{display:none}
+  .sources-grid{grid-template-columns:1fr}
+  .dl-inner{grid-template-columns:1fr}
+  .qr-box{display:none}
+  nav{padding:16px 24px}
+  .nav-links li:not(:last-child){display:none}
+  .wrap{padding:80px 28px}
+  footer{padding:40px 28px;flex-direction:column;text-align:center}
+  .footer-links{justify-content:center}
+  .dl-band{padding:80px 28px}
+}
+@media(max-width:600px){.feat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="#" class="logo">
+    <img src="https://raw.githubusercontent.com/CopperLauncher/ModVault/main/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" alt="ModVault" onerror="this.style.display='none'">
+    <span class="logo-text">ModVault</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Features</a></li>
+    <li><a href="#how">Setup</a></li>
+    <li><a href="#sources">Sources</a></li>
+    <li><a href="#faq">FAQ</a></li>
+    <li><a href="https://github.com/CopperLauncher/ModVault" target="_blank">GitHub ↗</a></li>
+    <li><a href="https://github.com/CopperLauncher/ModVault/releases" target="_blank" class="nav-dl">Download APK</a></li>
+  </ul>
+</nav>
+
+<div style="padding-top:72px">
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-left">
+    <div class="hero-badge"><span class="blink"></span>v1.2.1 · Modrinth + CurseForge + Shaders</div>
+    <h1>MODS.<br><em>ON YOUR</em><br><span class="ghost">PHONE.</span></h1>
+    <p class="hero-desc">Browse, install, and manage Minecraft mods directly on Android. No PC, no hassle — just tap and play.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/CopperLauncher/ModVault/releases" target="_blank" class="btn-a">⬇ Download APK</a>
+      <a href="https://github.com/CopperLauncher/ModVault" target="_blank" class="btn-b">★ GitHub</a>
+      <a href="https://discord.com/invite/r8wUtzMzUe" target="_blank" class="btn-b">💬 Discord</a>
+    </div>
+    <div class="hero-badges">
+      <img src="https://img.shields.io/badge/platform-Android-3ddc84?style=flat-square&logo=android&logoColor=white" alt="Android">
+      <img src="https://img.shields.io/badge/minSdk-24-blue?style=flat-square" alt="Min SDK 24">
+      <img src="https://img.shields.io/badge/license-LGPLv3-C8813A?style=flat-square" alt="License">
+      <img src="https://img.shields.io/github/actions/workflow/status/CopperLauncher/ModVault/android.yml?style=flat-square&label=CI" alt="CI">
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="phone-wrap">
+      <div class="phone-outer">
+        <div class="phone-screen">
+          <div class="phone-status"><span>9:41</span><span>●●● 100%</span></div>
+          <div class="phone-topbar">
+            <div class="phone-logo">
+              <img src="https://raw.githubusercontent.com/CopperLauncher/ModVault/main/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" alt="" onerror="this.style.display='none'">
+              <span>ModVault</span>
+            </div>
+            <span style="font-size:10px;color:var(--muted)">Browse</span>
+          </div>
+          <div class="phone-search"><span>🔍</span><span>Search mods...</span></div>
+          <div class="phone-chips">
+            <div class="chip active">Modrinth</div>
+            <div class="chip">CurseForge</div>
+            <div class="chip">1.21.4</div>
+            <div class="chip">Fabric</div>
+          </div>
+          <div class="phone-mods">
+            <div class="phone-mod"><div class="mod-icon">⚡</div><div class="mod-info"><div class="mod-name">Sodium</div><div class="mod-sub">2.4M downloads · Fabric</div></div><div class="mod-btn">Install</div></div>
+            <div class="phone-mod"><div class="mod-icon">🌊</div><div class="mod-info"><div class="mod-name">Iris Shaders</div><div class="mod-sub">1.8M downloads · Fabric</div></div><div class="mod-btn">Install</div></div>
+            <div class="phone-mod"><div class="mod-icon">📦</div><div class="mod-info"><div class="mod-name">Fabric API</div><div class="mod-sub">12M downloads · Fabric</div></div><div class="mod-btn" style="background:var(--green);color:#000">✓</div></div>
+            <div class="phone-mod"><div class="mod-icon">🗺️</div><div class="mod-info"><div class="mod-name">Xaero's Minimap</div><div class="mod-sub">5.2M downloads · Fabric</div></div><div class="mod-btn">Install</div></div>
+          </div>
+          <div class="phone-nav">
+            <div class="pnav active"><span>🔍</span>Browse</div>
+            <div class="pnav"><span>📦</span>Installed</div>
+            <div class="pnav"><span>⚙️</span>Settings</div>
+          </div>
+        </div>
+      </div>
+      <div class="phone-glow"></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-inner">
+    <span class="marquee-item">MODRINTH</span><span class="marquee-item">CURSEFORGE</span><span class="marquee-item">FABRIC</span><span class="marquee-item">FORGE</span><span class="marquee-item">NEOFORGE</span><span class="marquee-item">QUILT</span><span class="marquee-item">RESOURCE PACKS</span><span class="marquee-item">SHADERS</span><span class="marquee-item">AUTO DEPENDENCIES</span><span class="marquee-item">FREE & OPEN SOURCE</span>
+    <span class="marquee-item">MODRINTH</span><span class="marquee-item">CURSEFORGE</span><span class="marquee-item">FABRIC</span><span class="marquee-item">FORGE</span><span class="marquee-item">NEOFORGE</span><span class="marquee-item">QUILT</span><span class="marquee-item">RESOURCE PACKS</span><span class="marquee-item">SHADERS</span><span class="marquee-item">AUTO DEPENDENCIES</span><span class="marquee-item">FREE & OPEN SOURCE</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+<div class="wrap">
+  <div class="reveal">
+    <div class="tag">What it does</div>
+    <h2 class="sec-title">EVERYTHING.<br>NOTHING EXTRA.</h2>
+    <p class="sec-sub">A focused mod installer. No accounts, no ads, no bloat. Just mods.</p>
+  </div>
+  <div class="feat-grid reveal">
+    <div class="feat"><div class="feat-icon">🔍</div><div class="feat-title">Live Search</div><div class="feat-desc">Debounced live search across Modrinth and CurseForge. Results as you type.</div></div>
+    <div class="feat"><div class="feat-icon">🎛️</div><div class="feat-title">Smart Filters</div><div class="feat-desc">Filter by MC version (loaded live from API) and loader — Fabric, Forge, NeoForge, Quilt.</div></div>
+    <div class="feat"><div class="feat-icon">⬇️</div><div class="feat-title">One-Tap Install</div><div class="feat-desc">Pick a version and it downloads straight to your mods folder. That's literally it.</div></div>
+    <div class="feat"><div class="feat-icon">📦</div><div class="feat-title">Auto Dependencies</div><div class="feat-desc">Required deps are detected and downloaded automatically. No more missing lib errors.</div></div>
+    <div class="feat"><div class="feat-icon">🎨</div><div class="feat-title">Res Packs & Shaders</div><div class="feat-desc">Toggle content type. Each installs to the correct folder — mods/, resourcepacks/, shaderpacks/.</div></div>
+    <div class="feat"><div class="feat-icon">📁</div><div class="feat-title">Instance Picker</div><div class="feat-desc">Auto-scans CopperLauncher & PojavLauncher instances. Select once, never touch it again.</div></div>
+    <div class="feat"><div class="feat-icon">🗂️</div><div class="feat-title">Mod Manager</div><div class="feat-desc">Installed tab lists all mods with file sizes. Delete with one tap.</div></div>
+    <div class="feat"><div class="feat-icon">🔒</div><div class="feat-title">No Account Needed</div><div class="feat-desc">No sign-in, no tracking, no data collected. Open and install.</div></div>
+    <div class="feat"><div class="feat-icon">🌙</div><div class="feat-title">Copper Dark Theme</div><div class="feat-desc">CopperLauncher's signature orange-on-dark palette. Easy on the eyes at 2am.</div></div>
+  </div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how" style="background:var(--deep);border-top:1px solid var(--rim);border-bottom:1px solid var(--rim)">
+<div class="wrap">
+  <div class="reveal">
+    <div class="tag">Setup</div>
+    <h2 class="sec-title">RUNNING IN<br>60 SECONDS.</h2>
+    <p class="sec-sub">No PC needed. Everything on your phone.</p>
+  </div>
+  <div class="steps-grid reveal">
+    <div class="step-card">
+      <div class="step-num-wrap">01</div>
+      <div class="step-t">Download APK</div>
+      <div class="step-d">Grab the latest APK from GitHub Releases. Enable "Install unknown apps" if prompted by Android.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num-wrap">02</div>
+      <div class="step-t">Pick Instance</div>
+      <div class="step-d">Settings → tap "Scan for Instances" to auto-detect your launcher, or pick a folder manually.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num-wrap">03</div>
+      <div class="step-t">Search Mods</div>
+      <div class="step-d">Browse tab → search by name → filter by MC version and loader → toggle Modrinth or CurseForge.</div>
+    </div>
+    <div class="step-card">
+      <div class="step-num-wrap">04</div>
+      <div class="step-t">Tap Install</div>
+      <div class="step-d">Choose your version, tap Install. Dependencies handled automatically. Launch your game.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- SOURCES -->
+<section id="sources">
+<div class="wrap">
+  <div class="reveal">
+    <div class="tag">Mod Sources</div>
+    <h2 class="sec-title">TWO SOURCES.<br>ONE APP.</h2>
+    <p class="sec-sub">Toggle between Modrinth and CurseForge without leaving the app.</p>
+  </div>
+  <div class="sources-grid reveal">
+    <div class="source-card">
+      <div class="source-logo">🟢</div>
+      <div class="source-name">Modrinth</div>
+      <div class="source-desc">The modern, open mod platform. Free to use, developer-friendly, and the default source in ModVault. Full dependency resolution included.</div>
+      <span class="source-pill">Auto Dependencies</span><span class="source-pill">Free API</span><span class="source-pill">100K+ Mods</span>
+    </div>
+    <div class="source-card">
+      <div class="source-logo">🟠</div>
+      <div class="source-name">CurseForge</div>
+      <div class="source-desc">The largest Minecraft mod repository. Access exclusive mods and content not available on Modrinth, with the same one-tap install experience.</div>
+      <span class="source-pill">Exclusive Content</span><span class="source-pill">500K+ Projects</span><span class="source-pill">Shaders & More</span>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- DOWNLOAD -->
+<div class="dl-band" id="download">
+<div class="dl-inner reveal">
+  <div>
+    <div class="tag">Latest Release</div>
+    <div class="dl-title">READY<br>TO INSTALL.</div>
+    <p class="dl-sub">Free forever. Open source under GNU LGPLv3.<br>Built with ❤️ for the Android Minecraft community.</p>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:40px">
+      <a href="https://github.com/CopperLauncher/ModVault/releases" target="_blank" class="btn-a">⬇ Download APK</a>
+      <a href="https://github.com/CopperLauncher/ModVault" target="_blank" class="btn-b">View Source</a>
+    </div>
+    <div class="dl-meta">
+      <div class="dl-meta-item"><strong>v1.2.1-debug</strong>Latest</div>
+      <div class="dl-meta-item"><strong>Android 7.0+</strong>Min SDK 24</div>
+      <div class="dl-meta-item"><strong>Android 14</strong>Target SDK 34</div>
+      <div class="dl-meta-item"><strong>LGPLv3</strong>License</div>
+    </div>
+  </div>
+  <div class="qr-box" id="qr-container">
+    <div id="qr-real"></div>
+    <div class="qr-label">SCAN TO DOWNLOAD</div>
+  </div>
+</div>
+</div>
+
+<!-- FAQ -->
+<section id="faq">
+<div class="wrap">
+  <div class="reveal">
+    <div class="tag">FAQ</div>
+    <h2 class="sec-title">QUESTIONS<br>ANSWERED.</h2>
+    <p class="sec-sub">Still stuck? Join the <a href="https://discord.com/invite/r8wUtzMzUe" style="color:var(--ore2)">Discord</a>.</p>
+  </div>
+  <div class="faq-wrap reveal">
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Is ModVault free?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Yes, completely free. No ads, no premium tier, no paywalls. ModVault is open source under GNU LGPLv3 — view, fork, and modify freely on <a href="https://github.com/CopperLauncher/ModVault" target="_blank">GitHub</a>.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">What Android version do I need?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Android 7.0 (API 24) or higher. Tested on Android 9 through 14. On Android 11+, ModVault uses the Storage Access Framework — no storage permission popup required.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Do I need a Modrinth or CurseForge account?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>No account needed for either platform. ModVault uses the public APIs without sign-in. Zero data is collected or stored about you.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Where is my mods folder?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Use <strong>Scan for Instances</strong> in Settings — ModVault auto-detects launchers. Common paths:<br><br>CopperLauncher: <code>games/Amethyst/custom_instances/[name]/mods</code><br><br>PojavLauncher: <code>games/PojavLauncher/custom_instances/[name]/mods</code><br><br>Or tap <strong>Choose Mods Folder</strong> to pick any folder manually.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Why does Android warn about "unknown sources"?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>ModVault is not on the Play Store, so Android warns about sideloaded APKs — this is normal for open-source apps. Go to <strong>Settings → Security → Install unknown apps</strong> and allow your browser or file manager.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Can I install resource packs and shaders?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Yes! Use the content type buttons in the Browse tab to switch between Mods, Res Packs, and Shaders. Resource packs go to <code>resourcepacks/</code> and shaders go to <code>shaderpacks/</code> — both folders created automatically.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Are dependencies installed automatically?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Yes, for Modrinth mods. Required dependencies are detected and downloaded automatically. CurseForge dependency resolution is coming in a future update.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Which launchers are supported?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>ModVault works with any Android Minecraft Java launcher that uses a <code>/mods</code> folder. Built-in auto-detection for <strong>CopperLauncher</strong> and <strong>PojavLauncher</strong>. Zalith Launcher and others work via manual folder selection.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">How do I build from source?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Requires Android Studio Hedgehog+ and JDK 17.<br><br><code>git clone https://github.com/CopperLauncher/ModVault.git</code><br><code>cd ModVault && ./gradlew assembleDebug</code><br><br>Output: <code>app/build/outputs/apk/debug/app-debug.apk</code><br>CurseForge requires a <code>CURSEFORGE_API_KEY</code> env variable.</p></div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q" onclick="toggleFaq(this)">Where do I report bugs or request features?<div class="faq-icon">+</div></div>
+      <div class="faq-body"><p>Open an issue on <a href="https://github.com/CopperLauncher/ModVault/issues" target="_blank">GitHub Issues</a> or join the <a href="https://discord.com/invite/r8wUtzMzUe" target="_blank">CopperLauncher Discord</a> and post in the ModVault channel.</p></div>
+    </div>
+  </div>
+</div>
+</section>
+
+<footer>
+  <div class="footer-brand">
+    <img src="https://raw.githubusercontent.com/CopperLauncher/ModVault/main/app/src/main/res/mipmap-xxhdpi/ic_launcher.png" alt="ModVault" onerror="this.style.display='none'">
+    <div>
+      <div class="brand-name">ModVault</div>
+      <div class="brand-sub">Part of the CopperLauncher project · LGPLv3</div>
+    </div>
+  </div>
+  <div class="footer-links">
+    <a href="https://github.com/CopperLauncher/ModVault" target="_blank">GitHub</a>
+    <a href="https://github.com/CopperLauncher/ModVault/releases" target="_blank">Releases</a>
+    <a href="https://discord.com/invite/r8wUtzMzUe" target="_blank">Discord</a>
+    <a href="https://github.com/CopperLauncher/ModVault/blob/main/LICENSE" target="_blank">License</a>
+    <a href="https://github.com/CopperLauncher" target="_blank">CopperLauncher ↗</a>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(el){
+  const item=el.parentElement,wasOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+  if(!wasOpen)item.classList.add('open');
+}
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target)}})},{threshold:.08});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// QR Code
+const s=document.createElement('script');
+s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js';
+s.onload=()=>{
+  new QRCode(document.getElementById('qr-real'),{
+    text:'https://github.com/CopperLauncher/ModVault/releases',
+    width:140,height:140,colorDark:'#000',colorLight:'#fff',
+    correctLevel:QRCode.CorrectLevel.M
+  });
+};
+document.head.appendChild(s);
+</script>
+</body>
+</html>
