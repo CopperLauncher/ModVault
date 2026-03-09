@@ -27,6 +27,8 @@ import com.cuinstaller.app.model.ModVersion;
 import com.cuinstaller.app.model.SearchResponse;
 import com.cuinstaller.app.ui.InstalledModsAdapter;
 import com.cuinstaller.app.ui.ModAdapter;
+import com.cuinstaller.app.ui.InstanceAdapter;
+import java.util.ArrayList;
 import com.cuinstaller.app.utils.ModDownloader;
 import com.cuinstaller.app.utils.PrefManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -59,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
     private String currentProjectType = "mod";
     private Button btnModrinth, btnCurseForge;
     private Button btnTypeMods, btnTypeResourcepack, btnTypeShader;
+    private RecyclerView instancesRecycler;
+    private Button btnScanInstances;
+    private InstanceAdapter instanceAdapter;
+    private final java.util.List<java.io.File> instanceList = new ArrayList<>();
     private final ModDownloader downloader = new ModDownloader();
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -89,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
         setupTypeToggle();
         setupInstalledRecycler();
         setupSettings();
+        setupInstances();
 
         showTab("browse");
 
@@ -130,6 +137,8 @@ public class MainActivity extends AppCompatActivity {
         tvFolderPath    = findViewById(R.id.tv_folder_path);
         browseProgress  = findViewById(R.id.browse_progress);
         btnModrinth = findViewById(R.id.btn_modrinth);
+        instancesRecycler = findViewById(R.id.instances_recycler);
+        btnScanInstances = findViewById(R.id.btn_scan_instances);
         btnCurseForge = findViewById(R.id.btn_curseforge);
         btnTypeMods = findViewById(R.id.btn_type_mods);
         btnTypeResourcepack = findViewById(R.id.btn_type_resourcepack);
@@ -233,6 +242,47 @@ public class MainActivity extends AppCompatActivity {
             btnTypeResourcepack.setBackgroundTintList(inactive); btnTypeResourcepack.setTextColor(0xFFAAAAAA);
             searchMods(true);
         });
+    }
+
+    private void setupInstances() {
+        instanceAdapter = new InstanceAdapter(this, instanceList, (modsFolder, name) -> {
+            // Convert File to Uri and save
+            android.net.Uri uri = android.net.Uri.fromFile(modsFolder);
+            prefs.saveModsUri(uri);
+            updateFolderLabel();
+            Toast.makeText(this, "Instance set: " + name, Toast.LENGTH_SHORT).show();
+        });
+        instancesRecycler.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+        instancesRecycler.setAdapter(instanceAdapter);
+        btnScanInstances.setOnClickListener(v -> scanForInstances());
+        // Auto scan on open
+        scanForInstances();
+    }
+
+    private void scanForInstances() {
+        instanceList.clear();
+        // Common launcher paths
+        String[] basePaths = {
+            android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/games/PojavLauncher/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/.minecraft/versions",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/net.kdt.pojavlaunch/files/.minecraft/versions",
+        };
+        for (String path : basePaths) {
+            java.io.File dir = new java.io.File(path);
+            if (dir.exists() && dir.isDirectory()) {
+                java.io.File[] instances = dir.listFiles();
+                if (instances != null) {
+                    for (java.io.File f : instances) {
+                        if (f.isDirectory()) instanceList.add(f);
+                    }
+                }
+            }
+        }
+        instanceAdapter.notifyDataSetChanged();
+        if (instanceList.isEmpty()) {
+            Toast.makeText(this, "No instances found. Choose folder manually.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupSourceToggle() {

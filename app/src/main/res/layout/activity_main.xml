@@ -272,6 +272,33 @@
                 android:textStyle="bold"
                 android:layout_marginBottom="24dp"/>
 
+            <!-- Instances Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Select Instance"
+                android:textColor="#BBBBBB"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/instances_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"/>
+            <Button
+                android:id="@+id/btn_scan_instances"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scan for Instances"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#B87333"
+                android:layout_marginBottom="16dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#333"
+                android:layout_marginBottom="16dp"/>
+            <!-- Manual Folder Section -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
