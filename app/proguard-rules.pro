@@ -1,0 +1,5 @@
+-keep class com.google.gson.** { *; }
+-keep class okhttp3.** { *; }
+-keep class com.cuinstaller.app.model.** { *; }
+-keepattributes *Annotation*
+-keepattributes Signature
