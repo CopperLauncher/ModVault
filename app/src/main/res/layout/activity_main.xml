@@ -58,7 +58,7 @@
                 <Button
                     android:id="@+id/btn_modrinth"
                     android:layout_width="0dp"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Modrinth"
                     android:textSize="13sp"
@@ -69,7 +69,7 @@
                 <Button
                     android:id="@+id/btn_curseforge"
                     android:layout_width="0dp"
-                    android:layout_height="36dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="CurseForge"
                     android:textSize="13sp"
@@ -89,10 +89,10 @@
                 <Button
                     android:id="@+id/btn_type_mods"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Mods"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:backgroundTint="#B87333"
                     android:textColor="#FFFFFF"
                     android:layout_marginEnd="3dp"
@@ -100,10 +100,10 @@
                 <Button
                     android:id="@+id/btn_type_resourcepack"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Resource Packs"
-                    android:textSize="12sp"
+                    android:text="Res Packs"
+                    android:textSize="11sp"
                     android:backgroundTint="#241810"
                     android:textColor="#AAAAAA"
                     android:layout_marginEnd="3dp"
@@ -111,10 +111,10 @@
                 <Button
                     android:id="@+id/btn_type_shader"
                     android:layout_width="0dp"
-                    android:layout_height="32dp"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Shaders"
-                    android:textSize="12sp"
+                    android:textSize="11sp"
                     android:backgroundTint="#241810"
                     android:textColor="#AAAAAA"
                     style="@style/Widget.MaterialComponents.Button"/>
@@ -286,7 +286,7 @@
                 android:layout_height="wrap_content"
                 android:text="No folder selected"
                 android:textColor="#888888"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:background="@drawable/bg_search"
                 android:padding="12dp"
                 android:layout_marginBottom="12dp"/>
@@ -310,7 +310,7 @@
                 android:layout_height="wrap_content"
                 android:text="ModVault v1.0"
                 android:textColor="#555"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:gravity="center"/>
 
             <TextView
@@ -318,7 +318,7 @@
                 android:layout_height="wrap_content"
                 android:text="Powered by Modrinth API"
                 android:textColor="#555"
-                android:textSize="12sp"
+                android:textSize="11sp"
                 android:gravity="center"
                 android:layout_marginTop="4dp"/>
 
