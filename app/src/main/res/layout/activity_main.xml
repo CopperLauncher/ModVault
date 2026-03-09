@@ -316,11 +316,35 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Powered by Modrinth API"
-                android:textColor="#555"
+                android:text="Part of the CopperLauncher project"
+                android:textColor="#B87333"
                 android:textSize="11sp"
                 android:gravity="center"
                 android:layout_marginTop="4dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="github.com/CopperLauncher/ModVault"
+                android:textColor="#555"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:layout_marginTop="2dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="discord.com/invite/r8wUtzMzUe"
+                android:textColor="#555"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:layout_marginTop="2dp"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Powered by Modrinth API &amp; CurseForge API"
+                android:textColor="#444"
+                android:textSize="10sp"
+                android:gravity="center"
+                android:layout_marginTop="6dp"/>
 
         </LinearLayout>
 
