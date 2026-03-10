@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
     private InstanceAdapter instanceAdapter;
     private final java.util.List<java.io.File> instanceList = new ArrayList<>();
     private RecyclerView savedPathsRecycler;
-    private final ModDownloader downloader = new ModDownloader();
+    private ModDownloader downloader;
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         prefs = new PrefManager(this);
+        downloader = new ModDownloader(this);
         requestStoragePermissionIfNeeded();
         initViews();
         setupBottomNav();
@@ -588,7 +589,9 @@ public class MainActivity extends AppCompatActivity {
         progress.setCancelable(false);
         progress.show();
 
-        downloader.downloadMod(file, modsDir, version.dependencies,
+        Uri modsDirUri = prefs.getModsUri();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsDirUri != null) {
+            downloader.downloadMod(file, modsDirUri, version.dependencies,
             getSelectedVersion(), getSelectedLoader(),
             new ModDownloader.DownloadCallback() {
                 public void onProgress(String fileName, int percent) {
@@ -596,6 +599,16 @@ public class MainActivity extends AppCompatActivity {
                         progress.setMessage(fileName);
                         progress.setProgress(percent);
                     });
+        } else if (modsDir != null) {
+            downloader.downloadMod(file, modsDir, version.dependencies,
+            getSelectedVersion(), getSelectedLoader(),
+            new ModDownloader.DownloadCallback() {
+                public void onProgress(String fileName, int percent) {
+                    handler.post(() -> {
+                        progress.setMessage(fileName);
+                        progress.setProgress(percent);
+                    });
+        }
                 }
                 public void onSuccess(String fileName) {
                     handler.post(() -> {
