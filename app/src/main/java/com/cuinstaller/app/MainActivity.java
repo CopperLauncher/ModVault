@@ -614,7 +614,9 @@ public class MainActivity extends AppCompatActivity {
 
         Uri modsDirUri = prefs.getModsUri();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsDirUri != null) {
-            downloader.downloadMod(file, modsDirUri, version.dependencies,
+            androidx.documentfile.provider.DocumentFile targetDir = getTargetDocumentDir();
+            if (targetDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
+            downloader.downloadMod(file, targetDir.getUri(), version.dependencies,
                 getSelectedVersion(), getSelectedLoader(), callback);
         } else {
             java.io.File modsDir = getTargetDir();
@@ -682,6 +684,28 @@ public class MainActivity extends AppCompatActivity {
         }
         if (!target.exists()) target.mkdirs();
         return target;
+    }
+
+    // SAF version of getTargetDir - returns DocumentFile for the correct subfolder
+    private androidx.documentfile.provider.DocumentFile getTargetDocumentDir() {
+        Uri modsUri = prefs.getModsUri();
+        if (modsUri == null) return null;
+        androidx.documentfile.provider.DocumentFile modsDir =
+            androidx.documentfile.provider.DocumentFile.fromTreeUri(this, modsUri);
+        if (modsDir == null || !modsDir.exists()) return null;
+        // modsDir is the "mods" folder - parent is the instance/.minecraft folder
+        androidx.documentfile.provider.DocumentFile parent = modsDir.getParentFile();
+        if (parent == null) return modsDir; // fallback: dump everything in mods
+        if ("resourcepack".equals(currentProjectType)) {
+            androidx.documentfile.provider.DocumentFile rp = parent.findFile("resourcepacks");
+            if (rp == null) rp = parent.createDirectory("resourcepacks");
+            return rp;
+        } else if ("shader".equals(currentProjectType)) {
+            androidx.documentfile.provider.DocumentFile sp = parent.findFile("shaderpacks");
+            if (sp == null) sp = parent.createDirectory("shaderpacks");
+            return sp;
+        }
+        return modsDir;
     }
 
     private java.io.File getModsDir() {
