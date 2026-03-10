@@ -259,9 +259,18 @@
             android:id="@+id/layout_settings"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp"
             android:visibility="gone">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
 
             <TextView
                 android:layout_width="match_parent"
@@ -283,7 +292,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/instances_recycler"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="200dp"
                 android:layout_marginBottom="8dp"/>
             <Button
                 android:id="@+id/btn_scan_instances"
@@ -390,6 +399,9 @@
                 android:textSize="10sp"
                 android:gravity="center"
                 android:layout_marginTop="6dp"/>
+
+            </LinearLayout>
+            </ScrollView>
 
         </LinearLayout>
 
