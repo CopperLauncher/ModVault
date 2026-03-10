@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     // State
     private final List<ModResult> modResults = new ArrayList<>();
-    private final List<java.io.File> installedMods = new ArrayList<>();
+    private final List<Object> installedMods = new ArrayList<>();
     private ModAdapter modAdapter;
     private InstalledModsAdapter installedAdapter;
 
@@ -619,6 +619,22 @@ public class MainActivity extends AppCompatActivity {
     }
     private void refreshInstalled() {
         installedMods.clear();
+        Uri modsUri = prefs.getModsUri();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsUri != null) {
+            androidx.documentfile.provider.DocumentFile dir =
+                androidx.documentfile.provider.DocumentFile.fromTreeUri(this, modsUri);
+            if (dir != null && dir.exists()) {
+                for (androidx.documentfile.provider.DocumentFile f : dir.listFiles()) {
+                    String name = f.getName();
+                    if (name != null && (name.endsWith(".jar") || name.endsWith(".zip"))) {
+                        installedMods.add(f);
+                    }
+                }
+            }
+            installedAdapter.notifyDataSetChanged();
+            emptyInstalled.setVisibility(installedMods.isEmpty() ? View.VISIBLE : View.GONE);
+            return;
+        }
         java.io.File[] files = getInstalledFiles();
         if (files != null) {
             for (java.io.File f : files) {
