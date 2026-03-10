@@ -36,9 +36,7 @@ public class InstanceAdapter extends RecyclerView.Adapter<InstanceAdapter.ViewHo
         holder.name.setText(instance.getName());
         holder.path.setText(instance.getAbsolutePath());
         holder.select.setOnClickListener(v -> {
-            File modsFolder = new File(instance, "mods");
-            if (!modsFolder.exists()) modsFolder.mkdirs();
-            listener.onSelect(modsFolder, instance.getName());
+            listener.onSelect(instance, instance.getName());
         });
     }
 

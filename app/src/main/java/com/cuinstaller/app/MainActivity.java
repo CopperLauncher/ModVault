@@ -5,6 +5,10 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Build;
+import android.provider.Settings;
+import android.net.Uri;
+import android.os.Environment;
 import android.Manifest;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -28,6 +32,7 @@ import com.cuinstaller.app.model.SearchResponse;
 import com.cuinstaller.app.ui.InstalledModsAdapter;
 import com.cuinstaller.app.ui.ModAdapter;
 import com.cuinstaller.app.ui.InstanceAdapter;
+import com.cuinstaller.app.ui.SavedPathsAdapter;
 import java.util.ArrayList;
 import com.cuinstaller.app.utils.ModDownloader;
 import com.cuinstaller.app.utils.PrefManager;
@@ -51,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
     // State
     private final List<ModResult> modResults = new ArrayList<>();
-    private final List<java.io.File> installedMods = new ArrayList<>();
+    private final List<Object> installedMods = new ArrayList<>();
     private ModAdapter modAdapter;
     private InstalledModsAdapter installedAdapter;
 
@@ -65,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
     private Button btnScanInstances;
     private InstanceAdapter instanceAdapter;
     private final java.util.List<java.io.File> instanceList = new ArrayList<>();
-    private final ModDownloader downloader = new ModDownloader();
+    private RecyclerView savedPathsRecycler;
+    private ModDownloader downloader;
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
 
@@ -85,6 +91,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         prefs = new PrefManager(this);
+        downloader = new ModDownloader(this);
+        downloader = new ModDownloader(this);
         requestStoragePermissionIfNeeded();
         initViews();
         setupBottomNav();
@@ -95,6 +103,8 @@ public class MainActivity extends AppCompatActivity {
         setupTypeToggle();
         setupInstalledRecycler();
         setupSettings();
+        requestManageStoragePermission();
+        setupSavedPaths();
         setupInstances();
 
         showTab("browse");
@@ -104,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             showFolderPickerPrompt();
         } else {
             updateFolderLabel();
+            refreshSavedPaths();
             // Wait for versions to load before searching
         }
     }
@@ -138,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         browseProgress  = findViewById(R.id.browse_progress);
         btnModrinth = findViewById(R.id.btn_modrinth);
         instancesRecycler = findViewById(R.id.instances_recycler);
+        savedPathsRecycler = findViewById(R.id.saved_paths_recycler);
         btnScanInstances = findViewById(R.id.btn_scan_instances);
         btnCurseForge = findViewById(R.id.btn_curseforge);
         btnTypeMods = findViewById(R.id.btn_type_mods);
@@ -244,11 +256,50 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupSavedPaths() {
+        refreshSavedPaths();
+    }
+
+    private void refreshSavedPaths() {
+        java.util.List<android.net.Uri> saved = prefs.getSavedPaths();
+        android.net.Uri active = prefs.getModsUri();
+        if (saved.isEmpty()) {
+            savedPathsRecycler.setVisibility(View.GONE);
+            return;
+        }
+        savedPathsRecycler.setVisibility(View.VISIBLE);
+        savedPathsRecycler.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+        savedPathsRecycler.setAdapter(new SavedPathsAdapter(this, saved, active, new SavedPathsAdapter.Listener() {
+            @Override public void onUse(android.net.Uri uri) {
+                prefs.saveModsUri(uri);
+                updateFolderLabel();
+            refreshSavedPaths();
+                refreshSavedPaths();
+                Toast.makeText(MainActivity.this, "Switched to saved path", Toast.LENGTH_SHORT).show();
+            }
+            @Override public void onRemove(android.net.Uri uri) {
+                prefs.removeSavedPath(uri);
+                updateFolderLabel();
+            refreshSavedPaths();
+                refreshSavedPaths();
+            }
+        }));
+    }
+
+    private void requestManageStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            }
+        }
+    }
+
     private void setupInstances() {
-        instanceAdapter = new InstanceAdapter(this, instanceList, (modsFolder, name) -> {
-            // Convert File to Uri and save
-            android.net.Uri uri = android.net.Uri.fromFile(modsFolder);
-            prefs.saveModsUri(uri);
+        instanceAdapter = new InstanceAdapter(this, instanceList, (instanceFolder, name) -> {
+            android.net.Uri uri = android.net.Uri.fromFile(instanceFolder);
+            prefs.saveInstanceUri(uri);
             updateFolderLabel();
             Toast.makeText(this, "Instance set: " + name, Toast.LENGTH_SHORT).show();
         });
@@ -263,10 +314,13 @@ public class MainActivity extends AppCompatActivity {
         instanceList.clear();
         // Common launcher paths
         String[] basePaths = {
-            android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/PojavLauncher/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/CopperLauncher/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/git.artdeell.mojo/files/instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/PojavLauncher/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/com.maxjubayeryt.copper.debug/files/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/net.kdt.pojavlaunch/files/custom_instances",
         };
         for (String path : basePaths) {
             java.io.File dir = new java.io.File(path);
@@ -281,7 +335,22 @@ public class MainActivity extends AppCompatActivity {
         }
         instanceAdapter.notifyDataSetChanged();
         if (instanceList.isEmpty()) {
-            Toast.makeText(this, "No instances found. Choose folder manually.", Toast.LENGTH_SHORT).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("No instances found")
+                    .setMessage("On Android 11+, launcher files in Android/data/ can't be accessed automatically.\n\nTap 'Browse' to manually navigate to your launcher's custom_instances folder.")
+                    .setPositiveButton("Browse Android/data", (d, w) -> {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.putExtra("android.provider.extra.INITIAL_URI",
+                            android.provider.DocumentsContract.buildDocumentUri(
+                                "com.android.externalstorage.documents", "primary:Android/data"));
+                        startActivityForResult(intent, 42);
+                    })
+                    .setNegativeButton("Use Manual Picker", (d, w) -> btnChooseFolder.performClick())
+                    .show();
+            } else {
+                Toast.makeText(this, "No instances found. Choose folder manually.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -332,11 +401,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupInstalledRecycler() {
         installedAdapter = new InstalledModsAdapter(installedMods, mod -> {
+            String modName = (mod instanceof androidx.documentfile.provider.DocumentFile)
+                ? ((androidx.documentfile.provider.DocumentFile) mod).getName()
+                : ((java.io.File) mod).getName();
             new AlertDialog.Builder(this)
                 .setTitle("Delete mod?")
-                .setMessage("Remove \"" + mod.getName() + "\" from your mods folder?")
+                .setMessage("Remove \"" + modName + "\" from your instance folder?")
                 .setPositiveButton("Delete", (d, w) -> {
-                    if (mod.delete()) {
+                    boolean deleted = (mod instanceof androidx.documentfile.provider.DocumentFile)
+                        ? ((androidx.documentfile.provider.DocumentFile) mod).delete()
+                        : ((java.io.File) mod).delete();
+                    if (deleted) {
                         refreshInstalled();
                         Toast.makeText(this, "Mod removed", Toast.LENGTH_SHORT).show();
                     }
@@ -351,6 +426,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupSettings() {
         btnChooseFolder.setOnClickListener(v -> openFolderPicker());
         updateFolderLabel();
+            refreshSavedPaths();
     }
 
     private void searchMods(boolean reset) {
@@ -401,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (result.hits != null) {
                         // Mark already-installed mods
-                        java.io.File[] installed = getInstalledFiles();
+                        java.io.File[] installed = null;
                         for (ModResult mod : result.hits) {
                             mod.isInstalled = isAlreadyInstalled(mod, installed);
                         }
@@ -507,9 +583,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDownload(ModResult mod, ModVersion version, ModVersion.VersionFile file) {
-        java.io.File modsDir = getTargetDir();
-        if (modsDir == null) { showFolderPickerPrompt(); return; }
-
         ProgressDialog progress = new ProgressDialog(this);
         progress.setTitle("Installing " + mod.title);
         progress.setMessage("Downloading…");
@@ -518,37 +591,62 @@ public class MainActivity extends AppCompatActivity {
         progress.setCancelable(false);
         progress.show();
 
-        downloader.downloadMod(file, modsDir, version.dependencies,
-            getSelectedVersion(), getSelectedLoader(),
-            new ModDownloader.DownloadCallback() {
-                public void onProgress(String fileName, int percent) {
-                    handler.post(() -> {
-                        progress.setMessage(fileName);
-                        progress.setProgress(percent);
-                    });
-                }
-                public void onSuccess(String fileName) {
-                    handler.post(() -> {
-                        progress.dismiss();
-                        Toast.makeText(MainActivity.this,
-                            mod.title + " installed!", Toast.LENGTH_SHORT).show();
-                        // Mark as installed in list
-                        mod.isInstalled = true;
-                        modAdapter.notifyDataSetChanged();
-                    });
-                }
-                public void onError(String error) {
-                    handler.post(() -> {
-                        progress.dismiss();
-                        Toast.makeText(MainActivity.this,
-                            "Install failed: " + error, Toast.LENGTH_LONG).show();
-                    });
-                }
-            });
-    }
+        ModDownloader.DownloadCallback callback = new ModDownloader.DownloadCallback() {
+            public void onProgress(String fileName, int percent) {
+                handler.post(() -> { progress.setMessage(fileName); progress.setProgress(percent); });
+            }
+            public void onSuccess(String fileName) {
+                handler.post(() -> {
+                    progress.dismiss();
+                    Toast.makeText(MainActivity.this, mod.title + " installed!", Toast.LENGTH_SHORT).show();
+                    mod.isInstalled = true;
+                    modAdapter.notifyDataSetChanged();
+                });
+            }
+            public void onError(String error) {
+                handler.post(() -> {
+                    progress.dismiss();
+                    Toast.makeText(MainActivity.this, "Install failed: " + error, Toast.LENGTH_LONG).show();
+                });
+            }
+        };
 
+        String subFolder = "resourcepack".equals(currentProjectType) ? "resourcepacks"
+                       : "shader".equals(currentProjectType) ? "shaderpacks"
+                       : "mods";
+        Uri instanceUri = prefs.getInstanceUri();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R
+                && instanceUri != null && "content".equals(instanceUri.getScheme())) {
+            downloader.downloadMod(file, instanceUri, subFolder,
+                version.dependencies, getSelectedVersion(), getSelectedLoader(), callback);
+        } else {
+            java.io.File targetDir = getTargetDirLegacy();
+            if (targetDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
+            downloader.downloadMod(file, targetDir,
+                version.dependencies, getSelectedVersion(), getSelectedLoader(), callback);
+        }
+    }
     private void refreshInstalled() {
         installedMods.clear();
+        Uri instanceUri = prefs.getInstanceUri();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R
+                && instanceUri != null && "content".equals(instanceUri.getScheme())) {
+            androidx.documentfile.provider.DocumentFile instanceDir =
+                androidx.documentfile.provider.DocumentFile.fromTreeUri(this, instanceUri);
+            if (instanceDir != null && instanceDir.exists()) {
+                androidx.documentfile.provider.DocumentFile modsDir = instanceDir.findFile("mods");
+                if (modsDir != null && modsDir.exists()) {
+                    for (androidx.documentfile.provider.DocumentFile f : modsDir.listFiles()) {
+                        String name = f.getName();
+                        if (name != null && (name.endsWith(".jar") || name.endsWith(".zip")))
+                            installedMods.add(f);
+                    }
+                }
+            }
+            installedAdapter.notifyDataSetChanged();
+            emptyInstalled.setVisibility(installedMods.isEmpty() ? View.VISIBLE : View.GONE);
+            return;
+        }
         java.io.File[] files = getInstalledFiles();
         if (files != null) {
             for (java.io.File f : files) {
@@ -562,7 +660,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private java.io.File[] getInstalledFiles() {
-        java.io.File dir = getModsDir();
+        java.io.File instanceDir2 = getLegacyInstanceDir();
+        java.io.File dir = instanceDir2 != null ? new java.io.File(instanceDir2, "mods") : null;
         if (dir == null || !dir.exists()) return null;
         return dir.listFiles();
     }
@@ -577,39 +676,31 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private java.io.File getTargetDir() {
-        java.io.File base = getModsDir();
-        if (base == null) return null;
-        java.io.File target;
-        if ("resourcepack".equals(currentProjectType)) {
-            target = new java.io.File(base.getParent(), "resourcepacks");
-        } else if ("shader".equals(currentProjectType)) {
-            target = new java.io.File(base.getParent(), "shaderpacks");
-        } else {
-            return base;
-        }
-        if (!target.exists()) target.mkdirs();
-        return target;
-    }
 
-    private java.io.File getModsDir() {
-        Uri uri = prefs.getModsUri();
+
+
+    /** Legacy: get mods dir as File for Android < 11 */
+    private java.io.File getLegacyInstanceDir() {
+        Uri uri = prefs.getInstanceUri();
         if (uri == null) return null;
-        // Convert SAF URI to a real File path using DocumentFile
+        if ("file".equals(uri.getScheme())) return new java.io.File(uri.getPath());
         if ("content".equals(uri.getScheme())) {
-            android.provider.DocumentsContract.buildDocumentUriUsingTree(uri,
-                    android.provider.DocumentsContract.getTreeDocumentId(uri));
-            // Get actual path from URI
             String path = getRealPathFromUri(uri);
             if (path != null) return new java.io.File(path);
         }
-        if ("file".equals(uri.getScheme())) {
-            return new java.io.File(uri.getPath());
-        }
-        // Fallback to app-internal mods dir
-        java.io.File fallback = new java.io.File(getExternalFilesDir(null), ".minecraft/mods");
-        fallback.mkdirs();
-        return fallback;
+        return null;
+    }
+
+    private java.io.File getTargetDirLegacy() {
+        java.io.File instanceDir = getLegacyInstanceDir();
+        if (instanceDir == null) return null;
+        // Instance structure: custom_instances/{name}/mods (no .minecraft subfolder)
+        String sub = "resourcepack".equals(currentProjectType) ? "resourcepacks"
+                   : "shader".equals(currentProjectType) ? "shaderpacks"
+                   : "mods";
+        java.io.File target = new java.io.File(instanceDir, sub);
+        if (!target.exists()) target.mkdirs();
+        return target;
     }
 
     private String getRealPathFromUri(Uri uri) {
@@ -643,23 +734,24 @@ public class MainActivity extends AppCompatActivity {
                 Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             prefs.saveModsUri(uri);
             updateFolderLabel();
-            Toast.makeText(this, "Mods folder set!", Toast.LENGTH_SHORT).show();
+            refreshSavedPaths();
+            Toast.makeText(this, "Instance folder set!", Toast.LENGTH_SHORT).show();
             searchMods(true);
         }
     }
 
     private void updateFolderLabel() {
-        Uri uri = prefs.getModsUri();
+        Uri uri = prefs.getInstanceUri();
         if (tvFolderPath != null) {
-            tvFolderPath.setText(uri != null ? uri.getPath() : "No folder selected");
+            tvFolderPath.setText(uri != null ? uri.getLastPathSegment() : "No instance folder selected");
         }
     }
 
     private void showFolderPickerPrompt() {
         new AlertDialog.Builder(this)
-            .setTitle("Choose Mods Folder")
-            .setMessage("ModVault needs to know where your /mods folder is. Please select it now.")
-            .setPositiveButton("Choose Folder", (d, w) -> openFolderPicker())
+            .setTitle("Choose Instance Folder")
+            .setMessage("Select your instance folder (e.g. custom_instances/MyInstance). ModVault will auto-find mods, resourcepacks and shaderpacks inside it.")
+            .setPositiveButton("Choose Instance Folder", (d, w) -> openFolderPicker())
             .setNegativeButton("Later", null)
             .show();
     }
