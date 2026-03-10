@@ -297,12 +297,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupInstances() {
-        instanceAdapter = new InstanceAdapter(this, instanceList, (modsFolder, name) -> {
-            // Convert File to Uri and save
-            android.net.Uri uri = android.net.Uri.fromFile(modsFolder);
-            prefs.saveModsUri(uri);
+        instanceAdapter = new InstanceAdapter(this, instanceList, (instanceFolder, name) -> {
+            android.net.Uri uri = android.net.Uri.fromFile(instanceFolder);
+            prefs.saveInstanceUri(uri);
             updateFolderLabel();
-            refreshSavedPaths();
             Toast.makeText(this, "Instance set: " + name, Toast.LENGTH_SHORT).show();
         });
         instancesRecycler.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
