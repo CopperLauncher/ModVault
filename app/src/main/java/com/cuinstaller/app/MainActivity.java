@@ -755,6 +755,7 @@ public class MainActivity extends AppCompatActivity {
     private java.io.File getTargetDirLegacy() {
         java.io.File instanceDir = getLegacyInstanceDir();
         if (instanceDir == null) return null;
+        // Instance structure: custom_instances/{name}/mods (no .minecraft subfolder)
         String sub = "resourcepack".equals(currentProjectType) ? "resourcepacks"
                    : "shader".equals(currentProjectType) ? "shaderpacks"
                    : "mods";
@@ -810,7 +811,7 @@ public class MainActivity extends AppCompatActivity {
     private void showFolderPickerPrompt() {
         new AlertDialog.Builder(this)
             .setTitle("Choose Instance Folder")
-            .setMessage("Select your instance folder (e.g. .minecraft). ModVault will auto-find mods, resourcepacks and shaderpacks inside it.")
+            .setMessage("Select your instance folder (e.g. custom_instances/MyInstance). ModVault will auto-find mods, resourcepacks and shaderpacks inside it.")
             .setPositiveButton("Choose Instance Folder", (d, w) -> openFolderPicker())
             .setNegativeButton("Later", null)
             .show();
