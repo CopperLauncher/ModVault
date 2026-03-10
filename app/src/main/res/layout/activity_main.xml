@@ -298,6 +298,24 @@
                 android:layout_height="1dp"
                 android:background="#333"
                 android:layout_marginBottom="16dp"/>
+            <!-- Saved Paths Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Saved Paths"
+                android:textColor="#BBBBBB"
+                android:textSize="13sp"
+                android:layout_marginBottom="6dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/saved_paths_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#333"
+                android:layout_marginBottom="16dp"/>
             <!-- Manual Folder Section -->
             <TextView
                 android:layout_width="match_parent"
