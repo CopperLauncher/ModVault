@@ -693,18 +693,45 @@ public class MainActivity extends AppCompatActivity {
         androidx.documentfile.provider.DocumentFile modsDir =
             androidx.documentfile.provider.DocumentFile.fromTreeUri(this, modsUri);
         if (modsDir == null || !modsDir.exists()) return null;
-        // modsDir is the "mods" folder - parent is the instance/.minecraft folder
-        androidx.documentfile.provider.DocumentFile parent = modsDir.getParentFile();
-        if (parent == null) return modsDir; // fallback: dump everything in mods
-        if ("resourcepack".equals(currentProjectType)) {
-            androidx.documentfile.provider.DocumentFile rp = parent.findFile("resourcepacks");
-            if (rp == null) rp = parent.createDirectory("resourcepacks");
-            return rp;
-        } else if ("shader".equals(currentProjectType)) {
-            androidx.documentfile.provider.DocumentFile sp = parent.findFile("shaderpacks");
-            if (sp == null) sp = parent.createDirectory("shaderpacks");
-            return sp;
+
+        // For mods, use the folder directly
+        if (!"resourcepack".equals(currentProjectType) && !"shader".equals(currentProjectType)) {
+            return modsDir;
         }
+
+        // For resourcepacks/shaderpacks, try to find sibling folder using document tree
+        // The modsUri tree root is the picked folder itself, so we need to go up via the URI path
+        String targetFolder = "resourcepack".equals(currentProjectType) ? "resourcepacks" : "shaderpacks";
+
+        // Try: look for sibling in the same tree root
+        String treeId = android.provider.DocumentsContract.getTreeDocumentId(modsUri);
+        // treeId is like "primary:games/CopperLauncher/.../mods"
+        // Replace last segment with target folder
+        if (treeId != null && treeId.contains("/")) {
+            String parentTreeId = treeId.substring(0, treeId.lastIndexOf('/'));
+            String siblingTreeId = parentTreeId + "/" + targetFolder;
+            Uri siblingUri = android.provider.DocumentsContract.buildTreeDocumentUri(
+                modsUri.getAuthority(), siblingTreeId);
+            androidx.documentfile.provider.DocumentFile sibling =
+                androidx.documentfile.provider.DocumentFile.fromTreeUri(this, siblingUri);
+            if (sibling != null && sibling.exists()) return sibling;
+            // Try to create it via the parent
+            String parentDocId = parentTreeId;
+            Uri parentDocUri = android.provider.DocumentsContract.buildDocumentUriUsingTree(modsUri, parentDocId);
+            try {
+                Uri newDir = android.provider.DocumentsContract.createDocument(
+                    getContentResolver(), parentDocUri,
+                    android.provider.DocumentsContract.Document.MIME_TYPE_DIR, targetFolder);
+                if (newDir != null) {
+                    Uri newTreeUri = android.provider.DocumentsContract.buildTreeDocumentUri(
+                        modsUri.getAuthority(), siblingTreeId);
+                    return androidx.documentfile.provider.DocumentFile.fromTreeUri(this, newTreeUri);
+                }
+            } catch (Exception e) {
+                android.util.Log.e("ModVault", "createDocument failed: " + e.getMessage());
+            }
+        }
+        // Fallback: just use mods folder
         return modsDir;
     }
 
