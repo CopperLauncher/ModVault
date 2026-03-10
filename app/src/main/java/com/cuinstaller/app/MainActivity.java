@@ -92,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         prefs = new PrefManager(this);
         downloader = new ModDownloader(this);
+        downloader = new ModDownloader(this);
         requestStoragePermissionIfNeeded();
         initViews();
         setupBottomNav();
@@ -478,7 +479,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (result.hits != null) {
                         // Mark already-installed mods
-                        java.io.File[] installed = getInstalledFiles();
+                        java.io.File[] installed = null;
                         for (ModResult mod : result.hits) {
                             mod.isInstalled = isAlreadyInstalled(mod, installed);
                         }
@@ -671,20 +672,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    private java.io.File getTargetDir() {
-        java.io.File base = getModsDir();
-        if (base == null) return null;
-        java.io.File target;
-        if ("resourcepack".equals(currentProjectType)) {
-            target = new java.io.File(base.getParent(), "resourcepacks");
-        } else if ("shader".equals(currentProjectType)) {
-            target = new java.io.File(base.getParent(), "shaderpacks");
-        } else {
-            return base;
-        }
-        if (!target.exists()) target.mkdirs();
-        return target;
-    }
+
 
     // SAF version of getTargetDir - returns DocumentFile for the correct subfolder
     private androidx.documentfile.provider.DocumentFile getTargetDocumentDir() {
@@ -749,24 +737,27 @@ public class MainActivity extends AppCompatActivity {
         return modsDir; // fallback
     }
 
-    private java.io.File getModsDir() {
-        Uri uri = prefs.getModsUri();
+    /** Legacy: get mods dir as File for Android < 11 */
+    private java.io.File getLegacyInstanceDir() {
+        Uri uri = prefs.getInstanceUri();
         if (uri == null) return null;
-        // Convert SAF URI to a real File path using DocumentFile
+        if ("file".equals(uri.getScheme())) return new java.io.File(uri.getPath());
         if ("content".equals(uri.getScheme())) {
-            android.provider.DocumentsContract.buildDocumentUriUsingTree(uri,
-                    android.provider.DocumentsContract.getTreeDocumentId(uri));
-            // Get actual path from URI
             String path = getRealPathFromUri(uri);
             if (path != null) return new java.io.File(path);
         }
-        if ("file".equals(uri.getScheme())) {
-            return new java.io.File(uri.getPath());
-        }
-        // Fallback to app-internal mods dir
-        java.io.File fallback = new java.io.File(getExternalFilesDir(null), ".minecraft/mods");
-        fallback.mkdirs();
-        return fallback;
+        return null;
+    }
+
+    private java.io.File getTargetDirLegacy() {
+        java.io.File instanceDir = getLegacyInstanceDir();
+        if (instanceDir == null) return null;
+        String sub = "resourcepack".equals(currentProjectType) ? "resourcepacks"
+                   : "shader".equals(currentProjectType) ? "shaderpacks"
+                   : "mods";
+        java.io.File target = new java.io.File(instanceDir, sub);
+        if (!target.exists()) target.mkdirs();
+        return target;
     }
 
     private String getRealPathFromUri(Uri uri) {
@@ -801,23 +792,23 @@ public class MainActivity extends AppCompatActivity {
             prefs.saveModsUri(uri);
             updateFolderLabel();
             refreshSavedPaths();
-            Toast.makeText(this, "Mods folder set!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Instance folder set!", Toast.LENGTH_SHORT).show();
             searchMods(true);
         }
     }
 
     private void updateFolderLabel() {
-        Uri uri = prefs.getModsUri();
+        Uri uri = prefs.getInstanceUri();
         if (tvFolderPath != null) {
-            tvFolderPath.setText(uri != null ? uri.getPath() : "No folder selected");
+            tvFolderPath.setText(uri != null ? uri.getLastPathSegment() : "No instance folder selected");
         }
     }
 
     private void showFolderPickerPrompt() {
         new AlertDialog.Builder(this)
-            .setTitle("Choose Mods Folder")
-            .setMessage("ModVault needs to know where your /mods folder is. Please select it now.")
-            .setPositiveButton("Choose Folder", (d, w) -> openFolderPicker())
+            .setTitle("Choose Instance Folder")
+            .setMessage("Select your instance folder (e.g. .minecraft). ModVault will auto-find mods, resourcepacks and shaderpacks inside it.")
+            .setPositiveButton("Choose Instance Folder", (d, w) -> openFolderPicker())
             .setNegativeButton("Later", null)
             .show();
     }

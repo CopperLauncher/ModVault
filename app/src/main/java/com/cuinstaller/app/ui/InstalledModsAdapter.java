@@ -12,23 +12,17 @@ import java.io.File;
 import java.util.List;
 
 public class InstalledModsAdapter extends RecyclerView.Adapter<InstalledModsAdapter.ViewHolder> {
-
     public interface OnDeleteListener { void onDelete(Object mod); }
-
-    private final List<Object> mods; // Either File or DocumentFile
+    private final List<Object> mods;
     private final OnDeleteListener listener;
-
     public InstalledModsAdapter(List<Object> mods, OnDeleteListener listener) {
-        this.mods = mods;
-        this.listener = listener;
+        this.mods = mods; this.listener = listener;
     }
-
     @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_installed_mod, parent, false);
         return new ViewHolder(v);
     }
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Object mod = mods.get(position);
@@ -43,17 +37,13 @@ public class InstalledModsAdapter extends RecyclerView.Adapter<InstalledModsAdap
         }
         holder.btnDelete.setOnClickListener(v -> listener.onDelete(mod));
     }
-
     @Override public int getItemCount() { return mods.size(); }
-
     private String formatSize(long bytes) {
         if (bytes >= 1024 * 1024) return String.format("%.1f MB", bytes / (1024f * 1024f));
         return String.format("%.1f KB", bytes / 1024f);
     }
-
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView name, size;
-        ImageButton btnDelete;
+        TextView name, size; ImageButton btnDelete;
         ViewHolder(View v) {
             super(v);
             name = v.findViewById(R.id.mod_filename);
