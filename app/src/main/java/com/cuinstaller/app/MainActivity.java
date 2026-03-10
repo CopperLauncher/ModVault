@@ -402,11 +402,17 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupInstalledRecycler() {
         installedAdapter = new InstalledModsAdapter(installedMods, mod -> {
+            String modName = (mod instanceof androidx.documentfile.provider.DocumentFile)
+                ? ((androidx.documentfile.provider.DocumentFile) mod).getName()
+                : ((java.io.File) mod).getName();
             new AlertDialog.Builder(this)
                 .setTitle("Delete mod?")
-                .setMessage("Remove \"" + mod.getName() + "\" from your mods folder?")
+                .setMessage("Remove \"" + modName + "\" from your mods folder?")
                 .setPositiveButton("Delete", (d, w) -> {
-                    if (mod.delete()) {
+                    boolean deleted = (mod instanceof androidx.documentfile.provider.DocumentFile)
+                        ? ((androidx.documentfile.provider.DocumentFile) mod).delete()
+                        : ((java.io.File) mod).delete();
+                    if (deleted) {
                         refreshInstalled();
                         Toast.makeText(this, "Mod removed", Toast.LENGTH_SHORT).show();
                     }
