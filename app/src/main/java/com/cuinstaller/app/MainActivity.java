@@ -630,15 +630,18 @@ public class MainActivity extends AppCompatActivity {
     }
     private void refreshInstalled() {
         installedMods.clear();
-        Uri modsUri = prefs.getModsUri();
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsUri != null) {
-            androidx.documentfile.provider.DocumentFile dir =
-                androidx.documentfile.provider.DocumentFile.fromTreeUri(this, modsUri);
-            if (dir != null && dir.exists()) {
-                for (androidx.documentfile.provider.DocumentFile f : dir.listFiles()) {
-                    String name = f.getName();
-                    if (name != null && (name.endsWith(".jar") || name.endsWith(".zip"))) {
-                        installedMods.add(f);
+        Uri instanceUri = prefs.getInstanceUri();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R
+                && instanceUri != null && "content".equals(instanceUri.getScheme())) {
+            androidx.documentfile.provider.DocumentFile instanceDir =
+                androidx.documentfile.provider.DocumentFile.fromTreeUri(this, instanceUri);
+            if (instanceDir != null && instanceDir.exists()) {
+                androidx.documentfile.provider.DocumentFile modsDir = instanceDir.findFile("mods");
+                if (modsDir != null && modsDir.exists()) {
+                    for (androidx.documentfile.provider.DocumentFile f : modsDir.listFiles()) {
+                        String name = f.getName();
+                        if (name != null && (name.endsWith(".jar") || name.endsWith(".zip")))
+                            installedMods.add(f);
                     }
                 }
             }
