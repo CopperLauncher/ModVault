@@ -613,17 +613,16 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        Uri modsDirUri = prefs.getModsUri();
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsDirUri != null) {
-            androidx.documentfile.provider.DocumentFile targetDir = getTargetDocumentDir();
-            if (targetDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
-            downloader.downloadMod(file, instanceUri, subFolder, version.dependencies,
-                getSelectedVersion(), getSelectedLoader(), callback);
+        Uri instanceUri = prefs.getInstanceUri();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R
+                && instanceUri != null && "content".equals(instanceUri.getScheme())) {
+            downloader.downloadMod(file, instanceUri, subFolder,
+                version.dependencies, getSelectedVersion(), getSelectedLoader(), callback);
         } else {
-            java.io.File modsDir = getTargetDirLegacy();
-            if (modsDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
-            downloader.downloadMod(file, modsDir, version.dependencies,
-                getSelectedVersion(), getSelectedLoader(), callback);
+            java.io.File targetDir = getTargetDirLegacy();
+            if (targetDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
+            downloader.downloadMod(file, targetDir,
+                version.dependencies, getSelectedVersion(), getSelectedLoader(), callback);
         }
     }
     private void refreshInstalled() {
