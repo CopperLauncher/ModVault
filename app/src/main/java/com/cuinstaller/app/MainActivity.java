@@ -578,9 +578,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startDownload(ModResult mod, ModVersion version, ModVersion.VersionFile file) {
-        java.io.File modsDir = getTargetDir();
-        if (modsDir == null) { showFolderPickerPrompt(); return; }
-
         ProgressDialog progress = new ProgressDialog(this);
         progress.setTitle("Installing " + mod.title);
         progress.setMessage("Downloading…");
@@ -589,47 +586,37 @@ public class MainActivity extends AppCompatActivity {
         progress.setCancelable(false);
         progress.show();
 
+        ModDownloader.DownloadCallback callback = new ModDownloader.DownloadCallback() {
+            public void onProgress(String fileName, int percent) {
+                handler.post(() -> { progress.setMessage(fileName); progress.setProgress(percent); });
+            }
+            public void onSuccess(String fileName) {
+                handler.post(() -> {
+                    progress.dismiss();
+                    Toast.makeText(MainActivity.this, mod.title + " installed!", Toast.LENGTH_SHORT).show();
+                    mod.isInstalled = true;
+                    modAdapter.notifyDataSetChanged();
+                });
+            }
+            public void onError(String error) {
+                handler.post(() -> {
+                    progress.dismiss();
+                    Toast.makeText(MainActivity.this, "Install failed: " + error, Toast.LENGTH_LONG).show();
+                });
+            }
+        };
+
         Uri modsDirUri = prefs.getModsUri();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsDirUri != null) {
             downloader.downloadMod(file, modsDirUri, version.dependencies,
-            getSelectedVersion(), getSelectedLoader(),
-            new ModDownloader.DownloadCallback() {
-                public void onProgress(String fileName, int percent) {
-                    handler.post(() -> {
-                        progress.setMessage(fileName);
-                        progress.setProgress(percent);
-                    });
-        } else if (modsDir != null) {
+                getSelectedVersion(), getSelectedLoader(), callback);
+        } else {
+            java.io.File modsDir = getTargetDir();
+            if (modsDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
             downloader.downloadMod(file, modsDir, version.dependencies,
-            getSelectedVersion(), getSelectedLoader(),
-            new ModDownloader.DownloadCallback() {
-                public void onProgress(String fileName, int percent) {
-                    handler.post(() -> {
-                        progress.setMessage(fileName);
-                        progress.setProgress(percent);
-                    });
+                getSelectedVersion(), getSelectedLoader(), callback);
         }
-                }
-                public void onSuccess(String fileName) {
-                    handler.post(() -> {
-                        progress.dismiss();
-                        Toast.makeText(MainActivity.this,
-                            mod.title + " installed!", Toast.LENGTH_SHORT).show();
-                        // Mark as installed in list
-                        mod.isInstalled = true;
-                        modAdapter.notifyDataSetChanged();
-                    });
-                }
-                public void onError(String error) {
-                    handler.post(() -> {
-                        progress.dismiss();
-                        Toast.makeText(MainActivity.this,
-                            "Install failed: " + error, Toast.LENGTH_LONG).show();
-                    });
-                }
-            });
     }
-
     private void refreshInstalled() {
         installedMods.clear();
         java.io.File[] files = getInstalledFiles();
