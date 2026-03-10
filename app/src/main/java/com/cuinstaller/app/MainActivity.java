@@ -299,7 +299,22 @@ public class MainActivity extends AppCompatActivity {
         }
         instanceAdapter.notifyDataSetChanged();
         if (instanceList.isEmpty()) {
-            Toast.makeText(this, "No instances found. Choose folder manually.", Toast.LENGTH_SHORT).show();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                new androidx.appcompat.app.AlertDialog.Builder(this)
+                    .setTitle("No instances found")
+                    .setMessage("On Android 11+, launcher files in Android/data/ can't be accessed automatically.\n\nTap 'Browse' to manually navigate to your launcher's custom_instances folder.")
+                    .setPositiveButton("Browse Android/data", (d, w) -> {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.putExtra("android.provider.extra.INITIAL_URI",
+                            android.provider.DocumentsContract.buildDocumentUri(
+                                "com.android.externalstorage.documents", "primary:Android/data"));
+                        startActivityForResult(intent, 42);
+                    })
+                    .setNegativeButton("Use Manual Picker", (d, w) -> btnChooseFolder.performClick())
+                    .show();
+            } else {
+                Toast.makeText(this, "No instances found. Choose folder manually.", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
