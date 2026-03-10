@@ -267,10 +267,10 @@ public class MainActivity extends AppCompatActivity {
             android.os.Environment.getExternalStorageDirectory() + "/games/PojavLauncher/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/CopperLauncher/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
-            android.os.Environment.getExternalStorageDirectory() + "/android/data/git.artdeell.mojo/files/instances",
-            android.os.Environment.getExternalStorageDirectory() + "/android/data/PojavLauncher/custom_instances",
-            android.os.Environment.getExternalStorageDirectory() + "/android/data/com.maxjubayeryt.copper.debug/files/custom_instances",
-            android.os.Environment.getExternalStorageDirectory() + "/android/data/net.kdt.pojavlaunch/files/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/git.artdeell.mojo/files/instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/PojavLauncher/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/com.maxjubayeryt.copper.debug/files/custom_instances",
+            android.os.Environment.getExternalStorageDirectory() + "/Android/data/net.kdt.pojavlaunch/files/custom_instances",
         };
         for (String path : basePaths) {
             java.io.File dir = new java.io.File(path);
