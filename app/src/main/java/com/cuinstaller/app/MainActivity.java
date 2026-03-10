@@ -677,68 +677,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-    // SAF version of getTargetDir - returns DocumentFile for the correct subfolder
-    private androidx.documentfile.provider.DocumentFile getTargetDocumentDir() {
-        Uri modsUri = prefs.getModsUri();
-        if (modsUri == null) return null;
-        androidx.documentfile.provider.DocumentFile modsDir =
-            androidx.documentfile.provider.DocumentFile.fromTreeUri(this, modsUri);
-        if (modsDir == null || !modsDir.exists()) return null;
-        // Mods go straight into the picked folder
-        if (!"resourcepack".equals(currentProjectType) && !"shader".equals(currentProjectType)) {
-            return modsDir;
-        }
-        String targetFolder = "resourcepack".equals(currentProjectType) ? "resourcepacks" : "shaderpacks";
-        // The user picked the mods folder. We need the sibling folder.
-        // Strategy: use the tree root URI to find/create the sibling next to mods.
-        // The tree root gives us access to the whole subtree - find sibling via parent document.
-        try {
-            String treeDocId = android.provider.DocumentsContract.getTreeDocumentId(modsUri);
-            // Go up one level by trimming the last segment of the document ID
-            String parentDocId;
-            if (treeDocId.contains("/")) {
-                parentDocId = treeDocId.substring(0, treeDocId.lastIndexOf('/'));
-            } else {
-                // mods folder is at root of picked tree - nowhere to go up, fallback
-                return modsDir;
-            }
-            // Build a document URI for the parent using the same tree
-            Uri parentUri = android.provider.DocumentsContract.buildDocumentUriUsingTree(modsUri, parentDocId);
-            // Query children of parent to find the target folder
-            Uri childrenUri = android.provider.DocumentsContract.buildChildDocumentsUriUsingTree(modsUri, parentDocId);
-            try (android.database.Cursor c = getContentResolver().query(childrenUri,
-                    new String[]{
-                        android.provider.DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                        android.provider.DocumentsContract.Document.COLUMN_DISPLAY_NAME,
-                        android.provider.DocumentsContract.Document.COLUMN_MIME_TYPE
-                    }, null, null, null)) {
-                while (c != null && c.moveToNext()) {
-                    String name = c.getString(1);
-                    String mime = c.getString(2);
-                    if (targetFolder.equals(name) &&
-                            android.provider.DocumentsContract.Document.MIME_TYPE_DIR.equals(mime)) {
-                        String docId = c.getString(0);
-                        Uri targetTreeUri = android.provider.DocumentsContract.buildTreeDocumentUri(
-                            modsUri.getAuthority(), docId);
-                        return androidx.documentfile.provider.DocumentFile.fromTreeUri(this, targetTreeUri);
-                    }
-                }
-            }
-            // Not found - create it
-            Uri created = android.provider.DocumentsContract.createDocument(
-                getContentResolver(), parentUri,
-                android.provider.DocumentsContract.Document.MIME_TYPE_DIR, targetFolder);
-            if (created != null) {
-                String newDocId = android.provider.DocumentsContract.getDocumentId(created);
-                Uri newTreeUri = android.provider.DocumentsContract.buildTreeDocumentUri(
-                    modsUri.getAuthority(), newDocId);
-                return androidx.documentfile.provider.DocumentFile.fromTreeUri(this, newTreeUri);
-            }
-        } catch (Exception e) {
-            android.util.Log.e("ModVault", "getTargetDocumentDir failed: " + e.getMessage());
-        }
-        return modsDir; // fallback
-    }
 
     /** Legacy: get mods dir as File for Android < 11 */
     private java.io.File getLegacyInstanceDir() {
