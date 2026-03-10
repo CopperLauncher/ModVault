@@ -613,13 +613,16 @@ public class MainActivity extends AppCompatActivity {
         };
 
         Uri modsDirUri = prefs.getModsUri();
+        Toast.makeText(this, "DEBUG uri=" + modsDirUri + " sdk=" + android.os.Build.VERSION.SDK_INT, Toast.LENGTH_LONG).show();
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsDirUri != null) {
             androidx.documentfile.provider.DocumentFile targetDir = getTargetDocumentDir();
+            Toast.makeText(this, "DEBUG SAF targetDir=" + (targetDir == null ? "NULL" : targetDir.getUri()), Toast.LENGTH_LONG).show();
             if (targetDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
             downloader.downloadMod(file, targetDir.getUri(), version.dependencies,
                 getSelectedVersion(), getSelectedLoader(), callback);
         } else {
             java.io.File modsDir = getTargetDir();
+            Toast.makeText(this, "DEBUG File modsDir=" + modsDir, Toast.LENGTH_LONG).show();
             if (modsDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
             downloader.downloadMod(file, modsDir, version.dependencies,
                 getSelectedVersion(), getSelectedLoader(), callback);
