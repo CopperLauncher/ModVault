@@ -406,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
                 : ((java.io.File) mod).getName();
             new AlertDialog.Builder(this)
                 .setTitle("Delete mod?")
-                .setMessage("Remove \"" + modName + "\" from your mods folder?")
+                .setMessage("Remove \"" + modName + "\" from your instance folder?")
                 .setPositiveButton("Delete", (d, w) -> {
                     boolean deleted = (mod instanceof androidx.documentfile.provider.DocumentFile)
                         ? ((androidx.documentfile.provider.DocumentFile) mod).delete()

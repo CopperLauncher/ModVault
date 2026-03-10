@@ -320,7 +320,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Mods Folder"
+                android:text="Instance Folder"
                 android:textColor="#BBBBBB"
                 android:textSize="13sp"
                 android:layout_marginBottom="6dp"/>
