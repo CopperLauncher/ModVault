@@ -263,7 +263,6 @@ public class MainActivity extends AppCompatActivity {
         instanceList.clear();
         // Common launcher paths
         String[] basePaths = {
-            android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/PojavLauncher/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/CopperLauncher/custom_instances",
             android.os.Environment.getExternalStorageDirectory() + "/games/Amethyst/custom_instances",
