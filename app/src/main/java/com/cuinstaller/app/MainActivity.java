@@ -32,6 +32,7 @@ import com.cuinstaller.app.model.SearchResponse;
 import com.cuinstaller.app.ui.InstalledModsAdapter;
 import com.cuinstaller.app.ui.ModAdapter;
 import com.cuinstaller.app.ui.InstanceAdapter;
+import com.cuinstaller.app.ui.SavedPathsAdapter;
 import java.util.ArrayList;
 import com.cuinstaller.app.utils.ModDownloader;
 import com.cuinstaller.app.utils.PrefManager;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnScanInstances;
     private InstanceAdapter instanceAdapter;
     private final java.util.List<java.io.File> instanceList = new ArrayList<>();
+    private RecyclerView savedPathsRecycler;
     private final ModDownloader downloader = new ModDownloader();
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
         setupInstalledRecycler();
         setupSettings();
         requestManageStoragePermission();
+        setupSavedPaths();
         setupInstances();
 
         showTab("browse");
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             showFolderPickerPrompt();
         } else {
             updateFolderLabel();
+            refreshSavedPaths();
             // Wait for versions to load before searching
         }
     }
@@ -143,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         browseProgress  = findViewById(R.id.browse_progress);
         btnModrinth = findViewById(R.id.btn_modrinth);
         instancesRecycler = findViewById(R.id.instances_recycler);
+        savedPathsRecycler = findViewById(R.id.saved_paths_recycler);
         btnScanInstances = findViewById(R.id.btn_scan_instances);
         btnCurseForge = findViewById(R.id.btn_curseforge);
         btnTypeMods = findViewById(R.id.btn_type_mods);
@@ -249,6 +254,36 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void setupSavedPaths() {
+        refreshSavedPaths();
+    }
+
+    private void refreshSavedPaths() {
+        java.util.List<android.net.Uri> saved = prefs.getSavedPaths();
+        android.net.Uri active = prefs.getModsUri();
+        if (saved.isEmpty()) {
+            savedPathsRecycler.setVisibility(View.GONE);
+            return;
+        }
+        savedPathsRecycler.setVisibility(View.VISIBLE);
+        savedPathsRecycler.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
+        savedPathsRecycler.setAdapter(new SavedPathsAdapter(this, saved, active, new SavedPathsAdapter.Listener() {
+            @Override public void onUse(android.net.Uri uri) {
+                prefs.saveModsUri(uri);
+                updateFolderLabel();
+            refreshSavedPaths();
+                refreshSavedPaths();
+                Toast.makeText(MainActivity.this, "Switched to saved path", Toast.LENGTH_SHORT).show();
+            }
+            @Override public void onRemove(android.net.Uri uri) {
+                prefs.removeSavedPath(uri);
+                updateFolderLabel();
+            refreshSavedPaths();
+                refreshSavedPaths();
+            }
+        }));
+    }
+
     private void requestManageStoragePermission() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (!Environment.isExternalStorageManager()) {
@@ -265,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
             android.net.Uri uri = android.net.Uri.fromFile(modsFolder);
             prefs.saveModsUri(uri);
             updateFolderLabel();
+            refreshSavedPaths();
             Toast.makeText(this, "Instance set: " + name, Toast.LENGTH_SHORT).show();
         });
         instancesRecycler.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
@@ -384,6 +420,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupSettings() {
         btnChooseFolder.setOnClickListener(v -> openFolderPicker());
         updateFolderLabel();
+            refreshSavedPaths();
     }
 
     private void searchMods(boolean reset) {
@@ -676,6 +713,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
             prefs.saveModsUri(uri);
             updateFolderLabel();
+            refreshSavedPaths();
             Toast.makeText(this, "Mods folder set!", Toast.LENGTH_SHORT).show();
             searchMods(true);
         }
