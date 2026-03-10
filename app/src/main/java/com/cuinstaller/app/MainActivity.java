@@ -617,10 +617,10 @@ public class MainActivity extends AppCompatActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R && modsDirUri != null) {
             androidx.documentfile.provider.DocumentFile targetDir = getTargetDocumentDir();
             if (targetDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
-            downloader.downloadMod(file, targetDir.getUri(), version.dependencies,
+            downloader.downloadMod(file, instanceUri, subFolder, version.dependencies,
                 getSelectedVersion(), getSelectedLoader(), callback);
         } else {
-            java.io.File modsDir = getTargetDir();
+            java.io.File modsDir = getTargetDirLegacy();
             if (modsDir == null) { progress.dismiss(); showFolderPickerPrompt(); return; }
             downloader.downloadMod(file, modsDir, version.dependencies,
                 getSelectedVersion(), getSelectedLoader(), callback);
@@ -657,7 +657,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private java.io.File[] getInstalledFiles() {
-        java.io.File dir = getModsDir();
+        java.io.File instanceDir2 = getLegacyInstanceDir();
+        java.io.File dir = instanceDir2 != null ? new java.io.File(instanceDir2, "mods") : null;
         if (dir == null || !dir.exists()) return null;
         return dir.listFiles();
     }
