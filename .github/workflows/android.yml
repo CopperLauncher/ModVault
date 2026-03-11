@@ -32,17 +32,16 @@ jobs:
       - name: Decode Keystore
         run: |
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/modvault.jks
-      - name: Build Release APK
+      - name: Build Debug APK
         env:
           CURSEFORGE_API_KEY: ${{ secrets.CURSEFORGE_API_KEY }}
-          KEYSTORE_PATH: modvault.jks
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease --stacktrace
-      - name: Upload Release APK
+        run: ./gradlew assembleDebug --stacktrace
+      - name: Upload Debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: ModVault-release
-          path: app/build/outputs/apk/release/*.apk
+          name: ModVault-debug
+          path: app/build/outputs/apk/debug/*.apk
           retention-days: 30
