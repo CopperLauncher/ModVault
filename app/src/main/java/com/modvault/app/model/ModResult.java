@@ -1,4 +1,4 @@
-package com.cuinstaller.app.model;
+package com.modvault.app.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.List;

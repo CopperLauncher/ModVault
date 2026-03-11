@@ -1,4 +1,4 @@
-package com.cuinstaller.app.utils;
+package com.modvault.app.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package com.cuinstaller.app.ui;
+package com.modvault.app.ui;
 
 import android.content.Context;
 import android.net.Uri;
@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.cuinstaller.app.R;
+import com.modvault.app.R;
 import java.util.List;
 
 public class SavedPathsAdapter extends RecyclerView.Adapter<SavedPathsAdapter.ViewHolder> {

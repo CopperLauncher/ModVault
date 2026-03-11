@@ -1,4 +1,4 @@
-package com.cuinstaller.app;
+package com.modvault.app;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -24,18 +24,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.cuinstaller.app.api.ModrinthApi;
-import com.cuinstaller.app.api.CurseForgeApi;
-import com.cuinstaller.app.model.ModResult;
-import com.cuinstaller.app.model.ModVersion;
-import com.cuinstaller.app.model.SearchResponse;
-import com.cuinstaller.app.ui.InstalledModsAdapter;
-import com.cuinstaller.app.ui.ModAdapter;
-import com.cuinstaller.app.ui.InstanceAdapter;
-import com.cuinstaller.app.ui.SavedPathsAdapter;
+import com.modvault.app.api.ModrinthApi;
+import com.modvault.app.api.CurseForgeApi;
+import com.modvault.app.model.ModResult;
+import com.modvault.app.model.ModVersion;
+import com.modvault.app.model.SearchResponse;
+import com.modvault.app.ui.InstalledModsAdapter;
+import com.modvault.app.ui.ModAdapter;
+import com.modvault.app.ui.InstanceAdapter;
+import com.modvault.app.ui.SavedPathsAdapter;
 import java.util.ArrayList;
-import com.cuinstaller.app.utils.ModDownloader;
-import com.cuinstaller.app.utils.PrefManager;
+import com.modvault.app.utils.ModDownloader;
+import com.modvault.app.utils.PrefManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.Arrays;
