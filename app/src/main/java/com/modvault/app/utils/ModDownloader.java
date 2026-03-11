@@ -1,10 +1,10 @@
-package com.cuinstaller.app.utils;
+package com.modvault.app.utils;
 
 import android.content.Context;
 import android.net.Uri;
 import androidx.documentfile.provider.DocumentFile;
-import com.cuinstaller.app.api.ModrinthApi;
-import com.cuinstaller.app.model.ModVersion;
+import com.modvault.app.api.ModrinthApi;
+import com.modvault.app.model.ModVersion;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;

@@ -1,7 +1,7 @@
-package com.cuinstaller.app.api;
+package com.modvault.app.api;
 
-import com.cuinstaller.app.BuildConfig;
-import com.cuinstaller.app.model.ModResult;
+import com.modvault.app.BuildConfig;
+import com.modvault.app.model.ModResult;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

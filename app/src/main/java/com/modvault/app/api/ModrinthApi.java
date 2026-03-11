@@ -1,8 +1,8 @@
-package com.cuinstaller.app.api;
+package com.modvault.app.api;
 
-import com.cuinstaller.app.model.ModResult;
-import com.cuinstaller.app.model.ModVersion;
-import com.cuinstaller.app.model.SearchResponse;
+import com.modvault.app.model.ModResult;
+import com.modvault.app.model.ModVersion;
+import com.modvault.app.model.SearchResponse;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

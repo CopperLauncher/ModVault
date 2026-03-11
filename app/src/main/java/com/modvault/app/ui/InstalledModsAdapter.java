@@ -1,4 +1,4 @@
-package com.cuinstaller.app.ui;
+package com.modvault.app.ui;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.documentfile.provider.DocumentFile;
 import androidx.recyclerview.widget.RecyclerView;
-import com.cuinstaller.app.R;
+import com.modvault.app.R;
 import java.io.File;
 import java.util.List;
 
