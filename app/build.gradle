@@ -1,12 +1,10 @@
 plugins {
     id 'com.android.application'
 }
-
 android {
     buildFeatures { buildConfig = true }
     compileSdk 34
     namespace 'com.cuinstaller.app'
-
     defaultConfig {
         buildConfigField "String", "CURSEFORGE_API_KEY", (System.getenv("CURSEFORGE_API_KEY") != null ? "\"" + System.getenv("CURSEFORGE_API_KEY") + "\"" : "\"\"")
         applicationId "com.cuinstaller.app"
@@ -15,44 +13,37 @@ android {
         versionCode 1
         versionName "1.0"
     }
-
     signingConfigs {
         release {
-            storeFile file(System.getenv("KEYSTORE_PATH") ?: "modvault.jks")
+            storeFile file("${rootDir}/app/modvault.jks")
             storePassword System.getenv("KEYSTORE_PASSWORD") ?: ""
             keyAlias System.getenv("KEY_ALIAS") ?: ""
             keyPassword System.getenv("KEY_PASSWORD") ?: ""
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
 }
-
 dependencies {
-    // AndroidX
     implementation 'androidx.appcompat:appcompat:1.7.0'
     implementation 'androidx.recyclerview:recyclerview:1.3.2'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-
-    // Material Design (for BottomNavigationView)
     implementation 'com.google.android.material:material:1.12.0'
-
-    // Networking
     implementation 'com.squareup.okhttp3:okhttp:4.12.0'
-
-    // JSON parsing
     implementation 'com.google.code.gson:gson:2.10.1'
-
-    // Image loading (for mod icons)
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+    implementation 'androidx.documentfile:documentfile:1.0.1'
 }
