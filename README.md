@@ -14,10 +14,11 @@
   <img src="https://img.shields.io/badge/platform-Android-green" alt="Platform"/>
   <img src="https://img.shields.io/badge/minSdk-26-blue" alt="Min SDK"/>
   <img src="https://badges.crowdin.net/pojavlauncher/localized.svg" alt="Crowdin"/>
-  <img src="https://img.shields.io/discord/1355213558631366897?color=5865F2&logo=discord&logoColor=white&label=&style=flat" alt="Discord"/>
-  <img src="https://img.shields.io/badge/curseforge-maxjubayeryt-orange?logo=curseforge" alt="CurseForge"/>
-  <img src="https://img.shields.io/badge/modrinth-maxjubayeryt-green?logo=modrinth" alt="Modrinth"/>
-  <img src="https://img.shields.io/badge/modrinth-CopperLauncher-green?logo=modrinth" alt="Modrinth"/>
+  <a href="https://discord.com/invite/r8wUtzMzUe"><img src="https://img.shields.io/discord/1355213558631366897?color=5865F2&logo=discord&logoColor=white&label=&style=flat" alt="Discord"></a>
+  <a href="https://github.com/CopperLauncher/CopperLauncher"><img src="https://img.shields.io/badge/github-CopperLauncher-orange?logo=github" alt="GitHub"></a>
+  <a href="https://www.curseforge.com/members/maxjubayeryt/projects"><img src="https://img.shields.io/badge/curseforge-maxjubayeryt-orange?logo=curseforge" alt="CurseForge"></a>
+  <a href="https://modrinth.com/user/maxjubayeryt"><img src="https://img.shields.io/badge/modrinth-maxjubayeryt-green?logo=modrinth" alt="Modrinth User"></a>
+  <a href="https://modrinth.com/organization/copperlauncher"><img src="https://img.shields.io/badge/modrinth-CopperLauncher-green?logo=modrinth" alt="Modrinth Org"></a>
 </p>
 
 ---
