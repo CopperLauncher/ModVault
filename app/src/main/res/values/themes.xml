@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.ModVault" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_primary</item>
-        <item name="colorPrimaryVariant">#5C3D9E</item>
-        <item name="colorOnPrimary">@color/text_primary</item>
-        <item name="colorSurface">@color/surface_dark</item>
-        <item name="android:colorBackground">@color/background_dark</item>
-        <item name="android:windowBackground">@color/background_dark</item>
-        <item name="android:statusBarColor">@color/surface_dark</item>
-        <item name="android:navigationBarColor">@color/surface_dark</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="android:windowBackground">#0D0D0D</item>
+        <item name="colorPrimary">#B87333</item>
+        <item name="colorPrimaryDark">#1A120A</item>
+        <item name="colorAccent">#B87333</item>
     </style>
 </resources>

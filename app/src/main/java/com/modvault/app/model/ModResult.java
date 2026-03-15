@@ -12,6 +12,7 @@ public class ModResult {
     @SerializedName("downloads")  public int downloads;
     @SerializedName("categories") public List<String> categories;
     @SerializedName("versions")   public List<String> versions;
+    @SerializedName("followers") public int followers;
     public String source = "modrinth";
     @SerializedName("latest_version") public String latestVersion;
 

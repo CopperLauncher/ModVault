@@ -36,6 +36,7 @@ import com.modvault.app.ui.SavedPathsAdapter;
 import java.util.ArrayList;
 import com.modvault.app.utils.ModDownloader;
 import com.modvault.app.utils.PrefManager;
+import com.modvault.app.ModDetailActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
     private String currentProjectType = "mod";
     private Button btnModrinth, btnCurseForge;
     private Button btnTypeMods, btnTypeResourcepack, btnTypeShader;
+    private android.widget.CheckBox btnSnapshots;
+    private boolean includeSnapshots = false;
     private RecyclerView instancesRecycler;
     private Button btnScanInstances;
     private InstanceAdapter instanceAdapter;
@@ -87,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -156,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         btnTypeResourcepack = findViewById(R.id.btn_type_resourcepack);
         btnTypeShader = findViewById(R.id.btn_type_shader);
         btnLoadMore     = findViewById(R.id.btn_load_more);
+        btnSnapshots    = findViewById(R.id.btn_snapshots);
         btnChooseFolder = findViewById(R.id.btn_choose_folder);
     }
 
@@ -182,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupFilters() {
         // Load versions dynamically from Modrinth
-        api.getGameVersions(versions -> {
+        api.getGameVersions(includeSnapshots, versions -> {
             String[] versionArray = versions.toArray(new String[0]);
             runOnUiThread(() -> {
                 ArrayAdapter<String> vAdapter = new ArrayAdapter<>(this,
@@ -228,6 +233,19 @@ public class MainActivity extends AppCompatActivity {
 
         btnLoadMore = findViewById(R.id.btn_load_more);
         btnLoadMore.setOnClickListener(v -> searchMods(false));
+        btnSnapshots.setOnCheckedChangeListener((b, checked) -> {
+            includeSnapshots = checked;
+            
+            api.getGameVersions(includeSnapshots, versions -> {
+                String[] arr = versions.toArray(new String[0]);
+                runOnUiThread(() -> {
+                    android.widget.ArrayAdapter<String> a = new android.widget.ArrayAdapter<>(this,
+                        android.R.layout.simple_spinner_item, arr);
+                    a.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinnerVersion.setAdapter(a);
+                });
+            }, e -> {});
+        });
     }
 
     private void setupTypeToggle() {
@@ -385,12 +403,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBrowseRecycler() {
-        modAdapter = new ModAdapter(this, modResults, mod -> {
-            if (!prefs.hasModsFolder()) {
-                showFolderPickerPrompt();
-                return;
+        modAdapter = new ModAdapter(this, modResults, new com.modvault.app.ui.ModAdapter.OnInstallClickListener() {
+            public void onInstallClick(com.modvault.app.model.ModResult mod) {
+                if (!prefs.hasInstanceFolder()) { showFolderPickerPrompt(); return; }
+                showInstallDialog(mod);
             }
-            showInstallDialog(mod);
+            public void onModClick(com.modvault.app.model.ModResult mod) {
+                if (!prefs.hasInstanceFolder()) { showFolderPickerPrompt(); return; }
+                // Open detail screen
+                String modJson = new com.google.gson.Gson().toJson(mod);
+                Intent intent = new Intent(MainActivity.this, ModDetailActivity.class);
+                intent.putExtra(ModDetailActivity.EXTRA_MOD, modJson);
+                intent.putExtra(ModDetailActivity.EXTRA_PROJECT_TYPE, currentProjectType);
+                intent.putExtra(ModDetailActivity.EXTRA_SOURCE, mod.source);
+                intent.putExtra("game_version", getSelectedVersion());
+                intent.putExtra("loader", getSelectedLoader());
+                intent.putExtra("include_snapshots", includeSnapshots);
+                startActivity(intent);
+            }
         });
         browseRecycler.setLayoutManager(new LinearLayoutManager(this));
         browseRecycler.setAdapter(modAdapter);

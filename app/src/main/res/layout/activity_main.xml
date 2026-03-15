@@ -153,6 +153,16 @@
                 android:paddingBottom="8dp"
                 android:background="#1A120A">
 
+                <CheckBox
+                    android:id="@+id/btn_snapshots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Include Snapshots"
+                    android:textColor="#AAAAAA"
+                    android:textSize="11sp"
+                    android:buttonTint="#B87333"
+                    android:checked="false"
+                    android:layout_marginEnd="4dp"/>
                 <Spinner
                     android:id="@+id/spinner_version"
                     android:layout_width="0dp"
