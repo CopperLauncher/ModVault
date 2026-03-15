@@ -110,6 +110,7 @@ public class ModDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, "No versions found", Toast.LENGTH_SHORT).show();
                     return;
                 }
+                Toast.makeText(ModDetailActivity.this, versions.size() + " versions found", Toast.LENGTH_SHORT).show();
                 VersionAdapter adapter = new VersionAdapter(versions, (version, file) ->
                     startDownload(version, file));
                 versionsRecycler.setAdapter(adapter);
