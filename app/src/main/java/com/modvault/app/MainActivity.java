@@ -398,6 +398,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ModDetailActivity.class);
                 intent.putExtra(ModDetailActivity.EXTRA_MOD, modJson);
                 intent.putExtra(ModDetailActivity.EXTRA_PROJECT_TYPE, currentProjectType);
+                intent.putExtra(ModDetailActivity.EXTRA_SOURCE, mod.source);
                 startActivity(intent);
             }
         });

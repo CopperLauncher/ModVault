@@ -31,6 +31,7 @@ public class ModDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_MOD = "mod_json";
     public static final String EXTRA_PROJECT_TYPE = "project_type";
+    public static final String EXTRA_SOURCE = "source";
 
     private ModResult mod;
     private String projectType;
@@ -38,6 +39,8 @@ public class ModDetailActivity extends AppCompatActivity {
     private PrefManager prefs;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private final ModrinthApi api = new ModrinthApi();
+    private final CurseForgeApi cfApi = new CurseForgeApi();
+    private String source;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +53,7 @@ public class ModDetailActivity extends AppCompatActivity {
         // Get mod from intent
         String modJson = getIntent().getStringExtra(EXTRA_MOD);
         projectType = getIntent().getStringExtra(EXTRA_PROJECT_TYPE);
+        source = getIntent().getStringExtra(EXTRA_SOURCE);
         if (modJson == null) { finish(); return; }
         mod = new com.google.gson.Gson().fromJson(modJson, ModResult.class);
 
@@ -103,21 +107,57 @@ public class ModDetailActivity extends AppCompatActivity {
         versionsRecycler.setLayoutManager(new LinearLayoutManager(this));
         progress.setVisibility(View.VISIBLE);
 
-        api.getVersions(mod.projectId, "", "", versions -> {
-            handler.post(() -> {
+        if ("curseforge".equals(source)) {
+            // For CurseForge, use getLatestFile to get the version
+            cfApi.getLatestFile(mod.projectId, "", "", fileObj -> {
+                handler.post(() -> {
+                    progress.setVisibility(View.GONE);
+                    if (fileObj == null) {
+                        Toast.makeText(this, "No versions found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String fileId = fileObj.get("id").getAsString();
+                    String fileName = fileObj.get("fileName").getAsString();
+                    cfApi.getDownloadUrl(mod.projectId, fileId, url -> {
+                        handler.post(() -> {
+                            ModVersion fakeVersion = new ModVersion();
+                            fakeVersion.versionNumber = fileName;
+                            fakeVersion.versionType = "release";
+                            fakeVersion.dependencies = new java.util.ArrayList<>();
+                            ModVersion.VersionFile file = new ModVersion.VersionFile();
+                            file.url = url;
+                            file.filename = fileName;
+                            file.primary = true;
+                            fakeVersion.files = java.util.Arrays.asList(file);
+                            VersionAdapter adapter = new VersionAdapter(
+                                java.util.Arrays.asList(fakeVersion),
+                                (version, f) -> startDownload(version, f));
+                            versionsRecycler.setAdapter(adapter);
+                        });
+                    }, err -> handler.post(() ->
+                        Toast.makeText(this, "CF Error: " + err, Toast.LENGTH_SHORT).show()));
+                });
+            }, error -> handler.post(() -> {
                 progress.setVisibility(View.GONE);
-                if (versions == null || versions.isEmpty()) {
-                    Toast.makeText(this, "No versions found", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                VersionAdapter adapter = new VersionAdapter(versions, (version, file) ->
-                    startDownload(version, file));
-                versionsRecycler.setAdapter(adapter);
-            });
-        }, error -> handler.post(() -> {
-            progress.setVisibility(View.GONE);
-            Toast.makeText(this, "Failed to load versions", Toast.LENGTH_SHORT).show();
-        }));
+                Toast.makeText(this, "Failed to load versions", Toast.LENGTH_SHORT).show();
+            }));
+        } else {
+            api.getVersions(mod.projectId, "", "", versions -> {
+                handler.post(() -> {
+                    progress.setVisibility(View.GONE);
+                    if (versions == null || versions.isEmpty()) {
+                        Toast.makeText(this, "No versions found", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    VersionAdapter adapter = new VersionAdapter(versions, (version, file) ->
+                        startDownload(version, file));
+                    versionsRecycler.setAdapter(adapter);
+                });
+            }, error -> handler.post(() -> {
+                progress.setVisibility(View.GONE);
+                Toast.makeText(this, "Failed to load versions", Toast.LENGTH_SHORT).show();
+            }));
+        }
     }
 
     private void startDownload(ModVersion version, ModVersion.VersionFile file) {
