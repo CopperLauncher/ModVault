@@ -7,6 +7,8 @@ public class ModVersion {
     @SerializedName("id")             public String id;
     @SerializedName("name")           public String name;
     @SerializedName("version_number") public String versionNumber;
+    @SerializedName("version_type") public String versionType;
+    @SerializedName("date_published") public String datePublished;
     @SerializedName("game_versions")  public List<String> gameVersions;
     @SerializedName("loaders")        public List<String> loaders;
     @SerializedName("files")          public List<VersionFile> files;

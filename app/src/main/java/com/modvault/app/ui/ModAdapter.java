@@ -21,6 +21,7 @@ public class ModAdapter extends RecyclerView.Adapter<ModAdapter.ModViewHolder> {
 
     public interface OnInstallClickListener {
         void onInstallClick(ModResult mod);
+        default void onModClick(ModResult mod) { onInstallClick(mod); }
     }
 
     private final List<ModResult> mods;
@@ -66,6 +67,8 @@ public class ModAdapter extends RecyclerView.Adapter<ModAdapter.ModViewHolder> {
             holder.btnInstall.setAlpha(1f);
             holder.btnInstall.setOnClickListener(v -> listener.onInstallClick(mod));
         }
+        // Open detail on card click
+        holder.itemView.setOnClickListener(v -> listener.onModClick(mod));
     }
 
     @Override

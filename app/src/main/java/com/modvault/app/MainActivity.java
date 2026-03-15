@@ -36,6 +36,7 @@ import com.modvault.app.ui.SavedPathsAdapter;
 import java.util.ArrayList;
 import com.modvault.app.utils.ModDownloader;
 import com.modvault.app.utils.PrefManager;
+import com.modvault.app.ModDetailActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -385,12 +386,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBrowseRecycler() {
-        modAdapter = new ModAdapter(this, modResults, mod -> {
-            if (!prefs.hasModsFolder()) {
-                showFolderPickerPrompt();
-                return;
+        modAdapter = new ModAdapter(this, modResults, new com.modvault.app.ui.ModAdapter.OnInstallClickListener() {
+            public void onInstallClick(com.modvault.app.model.ModResult mod) {
+                if (!prefs.hasInstanceFolder()) { showFolderPickerPrompt(); return; }
+                showInstallDialog(mod);
             }
-            showInstallDialog(mod);
+            public void onModClick(com.modvault.app.model.ModResult mod) {
+                if (!prefs.hasInstanceFolder()) { showFolderPickerPrompt(); return; }
+                // Open detail screen
+                String modJson = new com.google.gson.Gson().toJson(mod);
+                Intent intent = new Intent(MainActivity.this, ModDetailActivity.class);
+                intent.putExtra(ModDetailActivity.EXTRA_MOD, modJson);
+                intent.putExtra(ModDetailActivity.EXTRA_PROJECT_TYPE, currentProjectType);
+                startActivity(intent);
+            }
         });
         browseRecycler.setLayoutManager(new LinearLayoutManager(this));
         browseRecycler.setAdapter(modAdapter);
