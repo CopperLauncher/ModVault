@@ -130,7 +130,8 @@ public class ModrinthApi {
                     List<String> versions = new java.util.ArrayList<>();
                     versions.add("Any");
                     for (com.google.gson.JsonObject tag : tags) {
-                        if ("release".equals(tag.get("version_type").getAsString())) {
+                        String vType = tag.get("version_type").getAsString();
+                        if ("release".equals(vType) || includeSnapshots) {
                             versions.add(tag.get("version").getAsString());
                         }
                     }
