@@ -153,6 +153,17 @@
                 android:paddingBottom="8dp"
                 android:background="#1A120A">
 
+                <ToggleButton
+                    android:id="@+id/btn_snapshots"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:textOn="📸 Snap"
+                    android:textOff="📸 Snap"
+                    android:textSize="10sp"
+                    android:textColor="#AAAAAA"
+                    android:backgroundTint="#1A120A"
+                    android:checked="false"
+                    android:layout_marginEnd="4dp"/>
                 <Spinner
                     android:id="@+id/spinner_version"
                     android:layout_width="0dp"

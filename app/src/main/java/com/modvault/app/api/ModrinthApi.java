@@ -116,7 +116,7 @@ public class ModrinthApi {
     private String encode(String s) {
         try { return java.net.URLEncoder.encode(s, "UTF-8"); } catch (Exception e) { return s; }
     }
-    public void getGameVersions(OnSuccess<List<String>> onSuccess, OnError onError) {
+    public void getGameVersions(boolean includeSnapshots, OnSuccess<List<String>> onSuccess, OnError onError) {
         new Thread(() -> {
             try {
                 Request request = new Request.Builder()
