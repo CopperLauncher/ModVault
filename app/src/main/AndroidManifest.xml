@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
 
-            <activity android:name=".ModDetailActivity" android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+            <activity android:name=".ModDetailActivity" android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar"/>
     </application>
 
 </manifest>

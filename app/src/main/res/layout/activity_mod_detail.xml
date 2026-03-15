@@ -19,7 +19,8 @@
             android:layout_height="40dp"
             android:src="@drawable/ic_back"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:tint="#FFFFFF"/>
+            android:tint="#FFFFFF"
+            android:contentDescription="Back"/>
         <TextView
             android:id="@+id/tv_detail_title"
             android:layout_width="0dp"
