@@ -152,7 +152,12 @@ public class ModDetailActivity extends AppCompatActivity {
                         Toast.makeText(this, "No versions found", Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    VersionAdapter adapter = new VersionAdapter(versions, (version, file) ->
+                    List<ModVersion> filtered = new java.util.ArrayList<>();
+                    for (ModVersion v : versions) {
+                        String vType = v.versionType != null ? v.versionType : "release";
+                        if ("release".equals(vType) || includeSnapshots) filtered.add(v);
+                    }
+                    VersionAdapter adapter = new VersionAdapter(filtered, (version, file) ->
                         startDownload(version, file));
                     versionsRecycler.setAdapter(adapter);
                 });
