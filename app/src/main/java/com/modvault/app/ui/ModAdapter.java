@@ -56,17 +56,6 @@ public class ModAdapter extends RecyclerView.Adapter<ModAdapter.ModViewHolder> {
         } else {
             holder.icon.setImageResource(R.drawable.ic_mod_default);
         }
-
-        if (mod.isInstalled) {
-            holder.btnInstall.setText("✓ Installed");
-            holder.btnInstall.setEnabled(false);
-            holder.btnInstall.setAlpha(0.6f);
-        } else {
-            holder.btnInstall.setText("Install");
-            holder.btnInstall.setEnabled(true);
-            holder.btnInstall.setAlpha(1f);
-            holder.btnInstall.setOnClickListener(v -> listener.onInstallClick(mod));
-        }
         // Open detail on card click
         holder.itemView.setOnClickListener(v -> listener.onModClick(mod));
     }
@@ -84,7 +73,6 @@ public class ModAdapter extends RecyclerView.Adapter<ModAdapter.ModViewHolder> {
     static class ModViewHolder extends RecyclerView.ViewHolder {
         ImageView icon;
         TextView title, description, downloads;
-        Button btnInstall;
 
         ModViewHolder(View itemView) {
             super(itemView);
@@ -92,7 +80,6 @@ public class ModAdapter extends RecyclerView.Adapter<ModAdapter.ModViewHolder> {
             title       = itemView.findViewById(R.id.mod_title);
             description = itemView.findViewById(R.id.mod_description);
             downloads   = itemView.findViewById(R.id.mod_downloads);
-            btnInstall  = itemView.findViewById(R.id.btn_install);
         }
     }
 }

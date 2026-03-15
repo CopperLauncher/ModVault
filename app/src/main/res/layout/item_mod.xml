@@ -54,17 +54,4 @@
 
     </LinearLayout>
 
-    <!-- Install Button -->
-    <Button
-        android:id="@+id/btn_install"
-        android:layout_width="80dp"
-        android:layout_height="36dp"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="8dp"
-        android:text="Install"
-        android:textColor="#FFFFFF"
-        android:textSize="12sp"
-        android:backgroundTint="#B87333"
-        android:paddingHorizontal="4dp"/>
-
 </LinearLayout>
