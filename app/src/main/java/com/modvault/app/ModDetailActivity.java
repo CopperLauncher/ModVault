@@ -54,6 +54,8 @@ public class ModDetailActivity extends AppCompatActivity {
         String modJson = getIntent().getStringExtra(EXTRA_MOD);
         projectType = getIntent().getStringExtra(EXTRA_PROJECT_TYPE);
         source = getIntent().getStringExtra(EXTRA_SOURCE);
+        String gameVersion = getIntent().getStringExtra("game_version") != null ? getIntent().getStringExtra("game_version") : "";
+        String loader = getIntent().getStringExtra("loader") != null ? getIntent().getStringExtra("loader") : "";
         if (modJson == null) { finish(); return; }
         mod = new com.google.gson.Gson().fromJson(modJson, ModResult.class);
 
@@ -142,7 +144,7 @@ public class ModDetailActivity extends AppCompatActivity {
                 Toast.makeText(this, "Failed to load versions", Toast.LENGTH_SHORT).show();
             }));
         } else {
-            api.getVersions(mod.projectId, "", "", versions -> {
+            api.getVersions(mod.projectId, gameVersion, loader, versions -> {
                 handler.post(() -> {
                     progress.setVisibility(View.GONE);
                     if (versions == null || versions.isEmpty()) {

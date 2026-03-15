@@ -399,6 +399,8 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(ModDetailActivity.EXTRA_MOD, modJson);
                 intent.putExtra(ModDetailActivity.EXTRA_PROJECT_TYPE, currentProjectType);
                 intent.putExtra(ModDetailActivity.EXTRA_SOURCE, mod.source);
+                intent.putExtra("game_version", getSelectedVersion());
+                intent.putExtra("loader", getSelectedLoader());
                 startActivity(intent);
             }
         });
