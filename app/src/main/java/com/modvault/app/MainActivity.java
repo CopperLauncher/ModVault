@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private String currentProjectType = "mod";
     private Button btnModrinth, btnCurseForge;
     private Button btnTypeMods, btnTypeResourcepack, btnTypeShader;
-    private android.widget.ToggleButton btnSnapshots;
+    private android.widget.CheckBox btnSnapshots;
     private boolean includeSnapshots = false;
     private RecyclerView instancesRecycler;
     private Button btnScanInstances;
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
         btnLoadMore.setOnClickListener(v -> searchMods(false));
         btnSnapshots.setOnCheckedChangeListener((b, checked) -> {
             includeSnapshots = checked;
-            btnSnapshots.setTextColor(checked ? 0xFFB87333 : 0xFFAAAAAA);
+            
             api.getGameVersions(includeSnapshots, versions -> {
                 String[] arr = versions.toArray(new String[0]);
                 runOnUiThread(() -> {

@@ -153,15 +153,14 @@
                 android:paddingBottom="8dp"
                 android:background="#1A120A">
 
-                <ToggleButton
+                <CheckBox
                     android:id="@+id/btn_snapshots"
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:textOn="Snapshots"
-                    android:textOff="Snapshots"
-                    android:textSize="10sp"
+                    android:layout_height="wrap_content"
+                    android:text="Include Snapshots"
                     android:textColor="#AAAAAA"
-                    android:backgroundTint="#1A120A"
+                    android:textSize="11sp"
+                    android:buttonTint="#B87333"
                     android:checked="false"
                     android:layout_marginEnd="4dp"/>
                 <Spinner
