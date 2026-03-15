@@ -418,6 +418,7 @@ public class MainActivity extends AppCompatActivity {
                 intent.putExtra(ModDetailActivity.EXTRA_SOURCE, mod.source);
                 intent.putExtra("game_version", getSelectedVersion());
                 intent.putExtra("loader", getSelectedLoader());
+                intent.putExtra("include_snapshots", includeSnapshots);
                 startActivity(intent);
             }
         });

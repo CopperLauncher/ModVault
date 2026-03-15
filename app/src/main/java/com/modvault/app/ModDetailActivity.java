@@ -56,6 +56,7 @@ public class ModDetailActivity extends AppCompatActivity {
         source = getIntent().getStringExtra(EXTRA_SOURCE);
         String gameVersion = getIntent().getStringExtra("game_version") != null ? getIntent().getStringExtra("game_version") : "";
         String loader = getIntent().getStringExtra("loader") != null ? getIntent().getStringExtra("loader") : "";
+        boolean includeSnapshots = getIntent().getBooleanExtra("include_snapshots", false);
         if (modJson == null) { finish(); return; }
         mod = new com.google.gson.Gson().fromJson(modJson, ModResult.class);
 
